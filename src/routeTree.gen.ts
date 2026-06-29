@@ -9,38 +9,153 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as AuthRouteImport } from './routes/auth'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedProyectosRouteImport } from './routes/_authenticated/proyectos'
+import { Route as AuthenticatedProveedoresRouteImport } from './routes/_authenticated/proveedores'
+import { Route as AuthenticatedPropiedadRouteImport } from './routes/_authenticated/propiedad'
+import { Route as AuthenticatedProyectosIdRouteImport } from './routes/_authenticated/proyectos.$id'
+import { Route as AuthenticatedProveedoresIdRouteImport } from './routes/_authenticated/proveedores.$id'
+import { Route as AuthenticatedPropiedadIdRouteImport } from './routes/_authenticated/propiedad.$id'
 
+const AuthRoute = AuthRouteImport.update({
+  id: '/auth',
+  path: '/auth',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedProyectosRoute = AuthenticatedProyectosRouteImport.update({
+  id: '/proyectos',
+  path: '/proyectos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProveedoresRoute =
+  AuthenticatedProveedoresRouteImport.update({
+    id: '/proveedores',
+    path: '/proveedores',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedPropiedadRoute = AuthenticatedPropiedadRouteImport.update({
+  id: '/propiedad',
+  path: '/propiedad',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedProyectosIdRoute =
+  AuthenticatedProyectosIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedProyectosRoute,
+  } as any)
+const AuthenticatedProveedoresIdRoute =
+  AuthenticatedProveedoresIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedProveedoresRoute,
+  } as any)
+const AuthenticatedPropiedadIdRoute =
+  AuthenticatedPropiedadIdRouteImport.update({
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedPropiedadRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/propiedad': typeof AuthenticatedPropiedadRouteWithChildren
+  '/proveedores': typeof AuthenticatedProveedoresRouteWithChildren
+  '/proyectos': typeof AuthenticatedProyectosRouteWithChildren
+  '/propiedad/$id': typeof AuthenticatedPropiedadIdRoute
+  '/proveedores/$id': typeof AuthenticatedProveedoresIdRoute
+  '/proyectos/$id': typeof AuthenticatedProyectosIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/auth': typeof AuthRoute
+  '/propiedad': typeof AuthenticatedPropiedadRouteWithChildren
+  '/proveedores': typeof AuthenticatedProveedoresRouteWithChildren
+  '/proyectos': typeof AuthenticatedProyectosRouteWithChildren
+  '/propiedad/$id': typeof AuthenticatedPropiedadIdRoute
+  '/proveedores/$id': typeof AuthenticatedProveedoresIdRoute
+  '/proyectos/$id': typeof AuthenticatedProyectosIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
+  '/auth': typeof AuthRoute
+  '/_authenticated/propiedad': typeof AuthenticatedPropiedadRouteWithChildren
+  '/_authenticated/proveedores': typeof AuthenticatedProveedoresRouteWithChildren
+  '/_authenticated/proyectos': typeof AuthenticatedProyectosRouteWithChildren
+  '/_authenticated/propiedad/$id': typeof AuthenticatedPropiedadIdRoute
+  '/_authenticated/proveedores/$id': typeof AuthenticatedProveedoresIdRoute
+  '/_authenticated/proyectos/$id': typeof AuthenticatedProyectosIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/auth'
+    | '/propiedad'
+    | '/proveedores'
+    | '/proyectos'
+    | '/propiedad/$id'
+    | '/proveedores/$id'
+    | '/proyectos/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/auth'
+    | '/propiedad'
+    | '/proveedores'
+    | '/proyectos'
+    | '/propiedad/$id'
+    | '/proveedores/$id'
+    | '/proyectos/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/_authenticated'
+    | '/auth'
+    | '/_authenticated/propiedad'
+    | '/_authenticated/proveedores'
+    | '/_authenticated/proyectos'
+    | '/_authenticated/propiedad/$id'
+    | '/_authenticated/proveedores/$id'
+    | '/_authenticated/proyectos/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
+  AuthRoute: typeof AuthRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/auth': {
+      id: '/auth'
+      path: '/auth'
+      fullPath: '/auth'
+      preLoaderRoute: typeof AuthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +163,112 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/proyectos': {
+      id: '/_authenticated/proyectos'
+      path: '/proyectos'
+      fullPath: '/proyectos'
+      preLoaderRoute: typeof AuthenticatedProyectosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/proveedores': {
+      id: '/_authenticated/proveedores'
+      path: '/proveedores'
+      fullPath: '/proveedores'
+      preLoaderRoute: typeof AuthenticatedProveedoresRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/propiedad': {
+      id: '/_authenticated/propiedad'
+      path: '/propiedad'
+      fullPath: '/propiedad'
+      preLoaderRoute: typeof AuthenticatedPropiedadRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/proyectos/$id': {
+      id: '/_authenticated/proyectos/$id'
+      path: '/$id'
+      fullPath: '/proyectos/$id'
+      preLoaderRoute: typeof AuthenticatedProyectosIdRouteImport
+      parentRoute: typeof AuthenticatedProyectosRoute
+    }
+    '/_authenticated/proveedores/$id': {
+      id: '/_authenticated/proveedores/$id'
+      path: '/$id'
+      fullPath: '/proveedores/$id'
+      preLoaderRoute: typeof AuthenticatedProveedoresIdRouteImport
+      parentRoute: typeof AuthenticatedProveedoresRoute
+    }
+    '/_authenticated/propiedad/$id': {
+      id: '/_authenticated/propiedad/$id'
+      path: '/$id'
+      fullPath: '/propiedad/$id'
+      preLoaderRoute: typeof AuthenticatedPropiedadIdRouteImport
+      parentRoute: typeof AuthenticatedPropiedadRoute
+    }
   }
 }
 
+interface AuthenticatedPropiedadRouteChildren {
+  AuthenticatedPropiedadIdRoute: typeof AuthenticatedPropiedadIdRoute
+}
+
+const AuthenticatedPropiedadRouteChildren: AuthenticatedPropiedadRouteChildren =
+  {
+    AuthenticatedPropiedadIdRoute: AuthenticatedPropiedadIdRoute,
+  }
+
+const AuthenticatedPropiedadRouteWithChildren =
+  AuthenticatedPropiedadRoute._addFileChildren(
+    AuthenticatedPropiedadRouteChildren,
+  )
+
+interface AuthenticatedProveedoresRouteChildren {
+  AuthenticatedProveedoresIdRoute: typeof AuthenticatedProveedoresIdRoute
+}
+
+const AuthenticatedProveedoresRouteChildren: AuthenticatedProveedoresRouteChildren =
+  {
+    AuthenticatedProveedoresIdRoute: AuthenticatedProveedoresIdRoute,
+  }
+
+const AuthenticatedProveedoresRouteWithChildren =
+  AuthenticatedProveedoresRoute._addFileChildren(
+    AuthenticatedProveedoresRouteChildren,
+  )
+
+interface AuthenticatedProyectosRouteChildren {
+  AuthenticatedProyectosIdRoute: typeof AuthenticatedProyectosIdRoute
+}
+
+const AuthenticatedProyectosRouteChildren: AuthenticatedProyectosRouteChildren =
+  {
+    AuthenticatedProyectosIdRoute: AuthenticatedProyectosIdRoute,
+  }
+
+const AuthenticatedProyectosRouteWithChildren =
+  AuthenticatedProyectosRoute._addFileChildren(
+    AuthenticatedProyectosRouteChildren,
+  )
+
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedPropiedadRoute: typeof AuthenticatedPropiedadRouteWithChildren
+  AuthenticatedProveedoresRoute: typeof AuthenticatedProveedoresRouteWithChildren
+  AuthenticatedProyectosRoute: typeof AuthenticatedProyectosRouteWithChildren
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedPropiedadRoute: AuthenticatedPropiedadRouteWithChildren,
+  AuthenticatedProveedoresRoute: AuthenticatedProveedoresRouteWithChildren,
+  AuthenticatedProyectosRoute: AuthenticatedProyectosRouteWithChildren,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
+  AuthRoute: AuthRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
