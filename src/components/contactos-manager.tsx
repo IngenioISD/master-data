@@ -140,7 +140,7 @@ export function ContactosManager({ table, fkColumn, fkValue }: Props) {
             )}
             {contactos.map((c) =>
               editing?.id === c.id ? (
-                <ContactoEditRow key={c.id} value={editing} onChange={setEditing} onCancel={() => setEditing(null)} onSave={() => upsert.mutate(editing)} />
+                <ContactoEditRow key={c.id} value={editing!} onChange={(v) => setEditing(v)} onCancel={() => setEditing(null)} onSave={() => editing && upsert.mutate(editing)} />
               ) : (
                 <TableRow key={c.id}>
                   <TableCell>
