@@ -1,11 +1,4 @@
-import {
-  createFileRoute,
-  redirect,
-  Outlet,
-  Link,
-  useRouterState,
-  useNavigate,
-} from "@tanstack/react-router";
+import { createFileRoute, redirect, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Building2, FolderKanban, Truck, LogOut } from "lucide-react";
@@ -45,15 +38,17 @@ const NAV = [
 function useCanAccess() {
   const { claims, user } = useAuth();
   const rolId = claims.rol_id as string | undefined;
+  const empresaId = claims.empresa_id as string | undefined;
   return useQuery({
-    queryKey: ["acceso-datos-maestros", rolId, user?.id],
+    queryKey: ["acceso-datos-maestros", rolId, empresaId, user?.id],
     enabled: !!user,
     queryFn: async () => {
-      if (!rolId) return false;
+      if (!rolId || !empresaId) return false;
       const { data, error } = await supabase
         .from("cliente_roles")
         .select("puede_gestionar_datos_maestros")
-        .eq("id", rolId)
+        .eq("cliente_id", empresaId)
+        .eq("rol_id", rolId)
         .maybeSingle();
       if (error) throw error;
       return !!data?.puede_gestionar_datos_maestros;
@@ -71,11 +66,7 @@ function AuthenticatedLayout() {
   }, [loading, user, navigate]);
 
   if (loading || !user || isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">
-        Cargando…
-      </div>
-    );
+    return <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">Cargando…</div>;
   }
 
   async function handleSignOut() {
@@ -91,16 +82,12 @@ function AuthenticatedLayout() {
             <span className="text-lg font-bold tracking-tight">Datos Maestros</span>
             <span className="inline-block h-2 w-2 rounded-full bg-accent" />
           </div>
-          <h1 className="mt-8 text-xl font-semibold text-foreground">
-            No tienes acceso a esta aplicación
-          </h1>
+          <h1 className="mt-8 text-xl font-semibold text-foreground">No tienes acceso a esta aplicación</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            Tu rol actual no incluye permisos para gestionar Datos Maestros.
-            Habla con el administrador de tu empresa si necesitas acceso.
+            Tu rol actual no incluye permisos para gestionar Datos Maestros. Habla con el administrador de tu empresa si
+            necesitas acceso.
           </p>
-          {user?.email && (
-            <p className="mt-1 text-xs text-muted-foreground">Sesión: {user.email}</p>
-          )}
+          {user?.email && <p className="mt-1 text-xs text-muted-foreground">Sesión: {user.email}</p>}
           <Button variant="outline" className="mt-6" onClick={handleSignOut}>
             <LogOut className="mr-2 h-4 w-4" /> Cerrar sesión
           </Button>
@@ -120,9 +107,7 @@ function AuthenticatedLayout() {
               <span className="text-sm font-semibold text-foreground">Datos Maestros</span>
             </div>
             <div className="flex items-center gap-3">
-              <span className="hidden text-xs text-muted-foreground sm:inline">
-                {user?.email}
-              </span>
+              <span className="hidden text-xs text-muted-foreground sm:inline">{user?.email}</span>
               <Button variant="ghost" size="sm" onClick={handleSignOut}>
                 <LogOut className="mr-2 h-4 w-4" /> Salir
               </Button>
@@ -145,9 +130,7 @@ function AppSidebar() {
       <SidebarHeader>
         <div className="flex items-center gap-2 px-2 py-1.5">
           <span className="inline-block h-2 w-2 rounded-full bg-accent" />
-          <span className="text-sm font-bold tracking-tight text-sidebar-foreground">
-            Datos Maestros
-          </span>
+          <span className="text-sm font-bold tracking-tight text-sidebar-foreground">Datos Maestros</span>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -170,9 +153,7 @@ function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="px-2 py-2 text-[10px] uppercase tracking-wider text-sidebar-foreground/60">
-          Ingenio
-        </div>
+        <div className="px-2 py-2 text-[10px] uppercase tracking-wider text-sidebar-foreground/60">Ingenio</div>
       </SidebarFooter>
     </Sidebar>
   );
