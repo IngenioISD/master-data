@@ -42,7 +42,7 @@ const NAV = [
   { title: "Proveedores", url: "/proveedores", icon: Truck },
 ] as const;
 
-function useCanAccess() {
+ffunction useCanAccess() {
   const { claims, user } = useAuth();
   const rolId = claims.rol_id as string | undefined;
   return useQuery({
