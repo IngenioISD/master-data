@@ -305,7 +305,18 @@ interface PPRow {
   proveedor_subcontrata: { nombre_legal: string; nif: string; tipo_proveedor: string | null } | null;
 }
 
-function ProveedoresAsignados({ proyectoId }: { proyectoId: string }) {
+function ProveedoresAsignados({
+  proyectoId,
+  canCreate = true,
+  canEdit = true,
+  canDelete = true,
+}: {
+  proyectoId: string;
+  canCreate?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
+}) {
+
   const { claims } = useAuth();
   const clienteId = claims.cliente_id as string | undefined;
   const qc = useQueryClient();
