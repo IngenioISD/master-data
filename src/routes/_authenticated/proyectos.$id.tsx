@@ -158,6 +158,7 @@ function ProyectoDetail() {
             <Label className="m-0">Estado:</Label>
             <Select
               value={data.estado ?? "En estudio"}
+              disabled={!permisos.puede_editar}
               onValueChange={(v) => {
                 if (v === "Adjudicado" && data.estado !== "Adjudicado") {
                   setAdjudicarOpen(true);
@@ -171,6 +172,7 @@ function ProyectoDetail() {
                 {ESTADOS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
               </SelectContent>
             </Select>
+
           </div>
         </CardContent>
       </Card>
