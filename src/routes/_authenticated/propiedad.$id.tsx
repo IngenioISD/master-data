@@ -132,9 +132,17 @@ function PropiedadDetail() {
       </Card>
       <Card>
         <CardContent className="pt-6">
-          <ContactosManager table="propiedad_contactos" fkColumn="propiedad_id" fkValue={id} />
+          <ContactosManager
+            table="propiedad_contactos"
+            fkColumn="propiedad_id"
+            fkValue={id}
+            canCreate={permisos.puede_crear}
+            canEdit={permisos.puede_editar}
+            canDelete={permisos.puede_eliminar}
+          />
         </CardContent>
       </Card>
+
     </div>
   );
 }
