@@ -164,13 +164,18 @@ export function ContactosManager({
                   <TableCell>{c.telefono}</TableCell>
                   <TableCell>{c.email}</TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" onClick={() => c.id && remove.mutate(c.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {canEdit && (
+                      <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <Button size="icon" variant="ghost" onClick={() => c.id && remove.mutate(c.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </TableCell>
+
                 </TableRow>
               ),
             )}
