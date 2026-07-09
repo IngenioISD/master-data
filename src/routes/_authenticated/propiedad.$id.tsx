@@ -21,6 +21,8 @@ export const Route = createFileRoute("/_authenticated/propiedad/$id")({
 function PropiedadDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const { permisos } = usePermisos();
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["propiedad", id],
