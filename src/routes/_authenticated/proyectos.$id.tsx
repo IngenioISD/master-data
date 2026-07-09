@@ -31,6 +31,8 @@ export const Route = createFileRoute("/_authenticated/proyectos/$id")({
 function ProyectoDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const { permisos } = usePermisos();
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["proyecto", id],
