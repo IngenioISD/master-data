@@ -11,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ContactosManager } from "@/components/contactos-manager";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
+import { usePermisos } from "@/lib/permisos";
+
 
 const TIPOS = ["Material", "Servicios", "Mixto"] as const;
 
