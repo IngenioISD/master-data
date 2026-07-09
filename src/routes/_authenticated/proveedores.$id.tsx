@@ -24,6 +24,8 @@ export const Route = createFileRoute("/_authenticated/proveedores/$id")({
 function ProveedorDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const { permisos } = usePermisos();
+
   const { data, isLoading } = useQuery({
     queryKey: ["proveedor", id],
     queryFn: async () => {
