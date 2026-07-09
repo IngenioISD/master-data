@@ -72,8 +72,9 @@ function ProyectosList() {
           <h1 className="text-2xl font-bold tracking-tight">Proyectos</h1>
           <p className="text-sm text-muted-foreground">Proyectos de tu cliente.</p>
         </div>
-        <NuevoProyectoDialog />
+        {permisos.puede_crear && <NuevoProyectoDialog />}
       </div>
+
       <div className="flex flex-wrap gap-3">
         <div className="relative max-w-md flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
