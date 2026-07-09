@@ -18,6 +18,8 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
 import { BuscarOCrearCombobox } from "@/components/buscar-o-crear-combobox";
+import { usePermisos } from "@/lib/permisos";
+
 
 const ESTADOS = ["En estudio", "Adjudicado", "Perdido", "Finalizado"] as const;
 
