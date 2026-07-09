@@ -45,9 +45,11 @@ interface PropiedadRow {
 
 function PropiedadList() {
   const { claims } = useAuth();
+  const { permisos } = usePermisos();
   const clienteId = claims.cliente_id as string | undefined;
   const [q, setQ] = useState("");
   const qc = useQueryClient();
+
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["propiedades", clienteId, q],
