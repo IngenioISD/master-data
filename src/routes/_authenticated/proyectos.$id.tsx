@@ -180,8 +180,14 @@ function ProyectoDetail() {
       <Card>
         <CardHeader><CardTitle>Proveedores asignados</CardTitle></CardHeader>
         <CardContent>
-          <ProveedoresAsignados proyectoId={id} />
+          <ProveedoresAsignados
+            proyectoId={id}
+            canCreate={permisos.puede_crear}
+            canEdit={permisos.puede_editar}
+            canDelete={permisos.puede_eliminar}
+          />
         </CardContent>
+
       </Card>
 
       <AdjudicarDialog
