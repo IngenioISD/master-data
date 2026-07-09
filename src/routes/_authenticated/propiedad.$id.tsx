@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContactosManager } from "@/components/contactos-manager";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
+import { usePermisos } from "@/lib/permisos";
+
 
 export const Route = createFileRoute("/_authenticated/propiedad/$id")({
   head: () => ({ meta: [{ title: "Propiedad · Datos Maestros" }] }),
