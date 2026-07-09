@@ -108,9 +108,12 @@ function ProyectoDetail() {
           <h1 className="text-xl font-bold">{nombre}</h1>
           {data.estado && <Badge variant="outline">{data.estado}</Badge>}
         </div>
-        <Button onClick={() => save.mutate()} disabled={save.isPending}>
-          <Save className="mr-2 h-4 w-4" /> Guardar
-        </Button>
+        {permisos.puede_editar && (
+          <Button onClick={() => save.mutate()} disabled={save.isPending}>
+            <Save className="mr-2 h-4 w-4" /> Guardar
+          </Button>
+        )}
+
       </div>
 
       <Card>
