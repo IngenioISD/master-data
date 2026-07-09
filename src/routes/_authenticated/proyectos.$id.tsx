@@ -410,12 +410,15 @@ function ProveedoresAsignados({
                 <TableCell className="font-medium">{pp.proveedor_subcontrata?.nombre_legal}</TableCell>
                 <TableCell>{pp.proveedor_subcontrata?.nif}</TableCell>
                 <TableCell>{pp.proveedor_subcontrata?.tipo_proveedor && <Badge variant="secondary">{pp.proveedor_subcontrata.tipo_proveedor}</Badge>}</TableCell>
-                <TableCell><Switch checked={!!pp.activo} onCheckedChange={(activo) => toggle.mutate({ id: pp.id, activo })} /></TableCell>
+                <TableCell><Switch checked={!!pp.activo} disabled={!canEdit} onCheckedChange={(activo) => toggle.mutate({ id: pp.id, activo })} /></TableCell>
                 <TableCell className="text-right">
-                  <Button size="icon" variant="ghost" onClick={() => eliminar.mutate(pp.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {canDelete && (
+                    <Button size="icon" variant="ghost" onClick={() => eliminar.mutate(pp.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>
