@@ -108,20 +108,23 @@ export function ContactosManager({
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Contactos</h3>
-        <Button
-          size="sm"
-          onClick={() =>
-            setEditing({
-              nombre: "",
-              apellidos: "",
-              departamento: "Administración",
-              telefono: "",
-              email: "",
-            })
-          }
-        >
-          <Plus className="mr-2 h-4 w-4" /> Añadir contacto
-        </Button>
+        {canCreate && (
+          <Button
+            size="sm"
+            onClick={() =>
+              setEditing({
+                nombre: "",
+                apellidos: "",
+                departamento: "Administración",
+                telefono: "",
+                email: "",
+              })
+            }
+          >
+            <Plus className="mr-2 h-4 w-4" /> Añadir contacto
+          </Button>
+        )}
+
       </div>
       <div className="rounded-md border bg-card">
         <Table>
