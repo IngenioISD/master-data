@@ -103,9 +103,12 @@ function PropiedadDetail() {
           </Button>
           <h1 className="text-xl font-bold">{form.nombre_comercial || form.nombre_legal}</h1>
         </div>
-        <Button onClick={() => save.mutate()} disabled={save.isPending}>
-          <Save className="mr-2 h-4 w-4" /> Guardar
-        </Button>
+        {permisos.puede_editar && (
+          <Button onClick={() => save.mutate()} disabled={save.isPending}>
+            <Save className="mr-2 h-4 w-4" /> Guardar
+          </Button>
+        )}
+
       </div>
       <Card>
         <CardHeader><CardTitle>Datos fiscales</CardTitle></CardHeader>
