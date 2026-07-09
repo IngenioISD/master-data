@@ -29,9 +29,20 @@ interface Props {
   table: "propiedad_contactos" | "proveedor_contactos";
   fkColumn: "propiedad_id" | "proveedor_id";
   fkValue: string;
+  canCreate?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
 }
 
-export function ContactosManager({ table, fkColumn, fkValue }: Props) {
+export function ContactosManager({
+  table,
+  fkColumn,
+  fkValue,
+  canCreate = true,
+  canEdit = true,
+  canDelete = true,
+}: Props) {
+
   const qc = useQueryClient();
   const queryKey = [table, fkValue] as const;
 
