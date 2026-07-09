@@ -365,29 +365,32 @@ function ProveedoresAsignados({
 
   return (
     <div className="space-y-3">
-      <div className="max-w-md">
-        <BuscarOCrearCombobox
-          placeholder="Asignar proveedor (busca por nombre o NIF)…"
-          queryKey={["proveedor-search", clienteId]}
-          search={async (term) => {
-            if (!clienteId) return [];
-            let qb = supabase
-              .from("proveedor_subcontrata")
-              .select("id, nif, nombre_legal, cliente_proveedores!inner(cliente_id)")
-              .eq("cliente_proveedores.cliente_id", clienteId);
-            if (term) qb = qb.or(`nombre_legal.ilike.%${term}%,nif.ilike.%${term}%`);
-            const { data, error } = await qb.limit(20);
-            if (error) throw error;
-            return (data ?? []) as { id: string; nif: string; nombre_legal: string }[];
-          }}
-          getLabel={(p) => p.nombre_legal}
-          getSubLabel={(p) => p.nif}
-          getValue={(p) => p.id}
-          onSelect={(p) => asignar.mutate(p.id)}
-          createLabel="Crear desde Proveedores"
-          onCreateNew={() => toast.info("Crea el proveedor desde la sección Proveedores y vuelve aquí.")}
-        />
-      </div>
+      {canCreate && (
+        <div className="max-w-md">
+          <BuscarOCrearCombobox
+            placeholder="Asignar proveedor (busca por nombre o NIF)…"
+            queryKey={["proveedor-search", clienteId]}
+            search={async (term) => {
+              if (!clienteId) return [];
+              let qb = supabase
+                .from("proveedor_subcontrata")
+                .select("id, nif, nombre_legal, cliente_proveedores!inner(cliente_id)")
+                .eq("cliente_proveedores.cliente_id", clienteId);
+              if (term) qb = qb.or(`nombre_legal.ilike.%${term}%,nif.ilike.%${term}%`);
+              const { data, error } = await qb.limit(20);
+              if (error) throw error;
+              return (data ?? []) as { id: string; nif: string; nombre_legal: string }[];
+            }}
+            getLabel={(p) => p.nombre_legal}
+            getSubLabel={(p) => p.nif}
+            getValue={(p) => p.id}
+            onSelect={(p) => asignar.mutate(p.id)}
+            createLabel="Crear desde Proveedores"
+            onCreateNew={() => toast.info("Crea el proveedor desde la sección Proveedores y vuelve aquí.")}
+          />
+        </div>
+      )}
+
       <div className="rounded-md border bg-card">
         <Table>
           <TableHeader>
