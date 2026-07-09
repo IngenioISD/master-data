@@ -1,6 +1,5 @@
 import { createFileRoute, redirect, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Building2, FolderKanban, Truck, LogOut } from "lucide-react";
 import {
   Sidebar,
@@ -19,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
+import { usePermisos } from "@/lib/permisos";
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
@@ -35,31 +35,12 @@ const NAV = [
   { title: "Proveedores", url: "/proveedores", icon: Truck },
 ] as const;
 
-function useCanAccess() {
-  const { claims, user } = useAuth();
-  const rolId = claims.rol_id as string | undefined;
-  const empresaId = claims.empresa_id as string | undefined;
-  return useQuery({
-    queryKey: ["acceso-datos-maestros", rolId, empresaId, user?.id],
-    enabled: !!user,
-    queryFn: async () => {
-      if (!rolId || !empresaId) return false;
-      const { data, error } = await supabase
-        .from("cliente_roles")
-        .select("puede_gestionar_datos_maestros")
-        .eq("cliente_id", empresaId)
-        .eq("rol_id", rolId)
-        .maybeSingle();
-      if (error) throw error;
-      return !!data?.puede_gestionar_datos_maestros;
-    },
-  });
-}
-
 function AuthenticatedLayout() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
-  const { data: canAccess, isLoading, error } = useCanAccess();
+  const { permisos, isLoading, error } = usePermisos();
+  const canAccess = permisos.puede_ver;
+
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth", replace: true });
