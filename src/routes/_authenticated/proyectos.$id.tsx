@@ -18,6 +18,8 @@ import {
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
 import { BuscarOCrearCombobox } from "@/components/buscar-o-crear-combobox";
+import { usePermisos } from "@/lib/permisos";
+
 
 const ESTADOS = ["En estudio", "Adjudicado", "Perdido", "Finalizado"] as const;
 
@@ -29,6 +31,8 @@ export const Route = createFileRoute("/_authenticated/proyectos/$id")({
 function ProyectoDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const { permisos } = usePermisos();
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["proyecto", id],
@@ -104,9 +108,12 @@ function ProyectoDetail() {
           <h1 className="text-xl font-bold">{nombre}</h1>
           {data.estado && <Badge variant="outline">{data.estado}</Badge>}
         </div>
-        <Button onClick={() => save.mutate()} disabled={save.isPending}>
-          <Save className="mr-2 h-4 w-4" /> Guardar
-        </Button>
+        {permisos.puede_editar && (
+          <Button onClick={() => save.mutate()} disabled={save.isPending}>
+            <Save className="mr-2 h-4 w-4" /> Guardar
+          </Button>
+        )}
+
       </div>
 
       <Card>
@@ -151,6 +158,7 @@ function ProyectoDetail() {
             <Label className="m-0">Estado:</Label>
             <Select
               value={data.estado ?? "En estudio"}
+              disabled={!permisos.puede_editar}
               onValueChange={(v) => {
                 if (v === "Adjudicado" && data.estado !== "Adjudicado") {
                   setAdjudicarOpen(true);
@@ -164,6 +172,7 @@ function ProyectoDetail() {
                 {ESTADOS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
               </SelectContent>
             </Select>
+
           </div>
         </CardContent>
       </Card>
@@ -171,8 +180,14 @@ function ProyectoDetail() {
       <Card>
         <CardHeader><CardTitle>Proveedores asignados</CardTitle></CardHeader>
         <CardContent>
-          <ProveedoresAsignados proyectoId={id} />
+          <ProveedoresAsignados
+            proyectoId={id}
+            canCreate={permisos.puede_crear}
+            canEdit={permisos.puede_editar}
+            canDelete={permisos.puede_eliminar}
+          />
         </CardContent>
+
       </Card>
 
       <AdjudicarDialog
@@ -290,7 +305,18 @@ interface PPRow {
   proveedor_subcontrata: { nombre_legal: string; nif: string; tipo_proveedor: string | null } | null;
 }
 
-function ProveedoresAsignados({ proyectoId }: { proyectoId: string }) {
+function ProveedoresAsignados({
+  proyectoId,
+  canCreate = true,
+  canEdit = true,
+  canDelete = true,
+}: {
+  proyectoId: string;
+  canCreate?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
+}) {
+
   const { claims } = useAuth();
   const clienteId = claims.cliente_id as string | undefined;
   const qc = useQueryClient();
@@ -339,29 +365,32 @@ function ProveedoresAsignados({ proyectoId }: { proyectoId: string }) {
 
   return (
     <div className="space-y-3">
-      <div className="max-w-md">
-        <BuscarOCrearCombobox
-          placeholder="Asignar proveedor (busca por nombre o NIF)…"
-          queryKey={["proveedor-search", clienteId]}
-          search={async (term) => {
-            if (!clienteId) return [];
-            let qb = supabase
-              .from("proveedor_subcontrata")
-              .select("id, nif, nombre_legal, cliente_proveedores!inner(cliente_id)")
-              .eq("cliente_proveedores.cliente_id", clienteId);
-            if (term) qb = qb.or(`nombre_legal.ilike.%${term}%,nif.ilike.%${term}%`);
-            const { data, error } = await qb.limit(20);
-            if (error) throw error;
-            return (data ?? []) as { id: string; nif: string; nombre_legal: string }[];
-          }}
-          getLabel={(p) => p.nombre_legal}
-          getSubLabel={(p) => p.nif}
-          getValue={(p) => p.id}
-          onSelect={(p) => asignar.mutate(p.id)}
-          createLabel="Crear desde Proveedores"
-          onCreateNew={() => toast.info("Crea el proveedor desde la sección Proveedores y vuelve aquí.")}
-        />
-      </div>
+      {canCreate && (
+        <div className="max-w-md">
+          <BuscarOCrearCombobox
+            placeholder="Asignar proveedor (busca por nombre o NIF)…"
+            queryKey={["proveedor-search", clienteId]}
+            search={async (term) => {
+              if (!clienteId) return [];
+              let qb = supabase
+                .from("proveedor_subcontrata")
+                .select("id, nif, nombre_legal, cliente_proveedores!inner(cliente_id)")
+                .eq("cliente_proveedores.cliente_id", clienteId);
+              if (term) qb = qb.or(`nombre_legal.ilike.%${term}%,nif.ilike.%${term}%`);
+              const { data, error } = await qb.limit(20);
+              if (error) throw error;
+              return (data ?? []) as { id: string; nif: string; nombre_legal: string }[];
+            }}
+            getLabel={(p) => p.nombre_legal}
+            getSubLabel={(p) => p.nif}
+            getValue={(p) => p.id}
+            onSelect={(p) => asignar.mutate(p.id)}
+            createLabel="Crear desde Proveedores"
+            onCreateNew={() => toast.info("Crea el proveedor desde la sección Proveedores y vuelve aquí.")}
+          />
+        </div>
+      )}
+
       <div className="rounded-md border bg-card">
         <Table>
           <TableHeader>
@@ -381,12 +410,15 @@ function ProveedoresAsignados({ proyectoId }: { proyectoId: string }) {
                 <TableCell className="font-medium">{pp.proveedor_subcontrata?.nombre_legal}</TableCell>
                 <TableCell>{pp.proveedor_subcontrata?.nif}</TableCell>
                 <TableCell>{pp.proveedor_subcontrata?.tipo_proveedor && <Badge variant="secondary">{pp.proveedor_subcontrata.tipo_proveedor}</Badge>}</TableCell>
-                <TableCell><Switch checked={!!pp.activo} onCheckedChange={(activo) => toggle.mutate({ id: pp.id, activo })} /></TableCell>
+                <TableCell><Switch checked={!!pp.activo} disabled={!canEdit} onCheckedChange={(activo) => toggle.mutate({ id: pp.id, activo })} /></TableCell>
                 <TableCell className="text-right">
-                  <Button size="icon" variant="ghost" onClick={() => eliminar.mutate(pp.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
+                  {canDelete && (
+                    <Button size="icon" variant="ghost" onClick={() => eliminar.mutate(pp.id)}>
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  )}
                 </TableCell>
+
               </TableRow>
             ))}
           </TableBody>

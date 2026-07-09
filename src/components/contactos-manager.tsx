@@ -29,9 +29,20 @@ interface Props {
   table: "propiedad_contactos" | "proveedor_contactos";
   fkColumn: "propiedad_id" | "proveedor_id";
   fkValue: string;
+  canCreate?: boolean;
+  canEdit?: boolean;
+  canDelete?: boolean;
 }
 
-export function ContactosManager({ table, fkColumn, fkValue }: Props) {
+export function ContactosManager({
+  table,
+  fkColumn,
+  fkValue,
+  canCreate = true,
+  canEdit = true,
+  canDelete = true,
+}: Props) {
+
   const qc = useQueryClient();
   const queryKey = [table, fkValue] as const;
 
@@ -97,20 +108,23 @@ export function ContactosManager({ table, fkColumn, fkValue }: Props) {
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-semibold">Contactos</h3>
-        <Button
-          size="sm"
-          onClick={() =>
-            setEditing({
-              nombre: "",
-              apellidos: "",
-              departamento: "Administración",
-              telefono: "",
-              email: "",
-            })
-          }
-        >
-          <Plus className="mr-2 h-4 w-4" /> Añadir contacto
-        </Button>
+        {canCreate && (
+          <Button
+            size="sm"
+            onClick={() =>
+              setEditing({
+                nombre: "",
+                apellidos: "",
+                departamento: "Administración",
+                telefono: "",
+                email: "",
+              })
+            }
+          >
+            <Plus className="mr-2 h-4 w-4" /> Añadir contacto
+          </Button>
+        )}
+
       </div>
       <div className="rounded-md border bg-card">
         <Table>
@@ -150,13 +164,18 @@ export function ContactosManager({ table, fkColumn, fkValue }: Props) {
                   <TableCell>{c.telefono}</TableCell>
                   <TableCell>{c.email}</TableCell>
                   <TableCell className="text-right">
-                    <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button size="icon" variant="ghost" onClick={() => c.id && remove.mutate(c.id)}>
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
+                    {canEdit && (
+                      <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    )}
+                    {canDelete && (
+                      <Button size="icon" variant="ghost" onClick={() => c.id && remove.mutate(c.id)}>
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    )}
                   </TableCell>
+
                 </TableRow>
               ),
             )}

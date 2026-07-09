@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContactosManager } from "@/components/contactos-manager";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
+import { usePermisos } from "@/lib/permisos";
+
 
 export const Route = createFileRoute("/_authenticated/propiedad/$id")({
   head: () => ({ meta: [{ title: "Propiedad · Datos Maestros" }] }),
@@ -19,6 +21,8 @@ export const Route = createFileRoute("/_authenticated/propiedad/$id")({
 function PropiedadDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const { permisos } = usePermisos();
+
 
   const { data, isLoading } = useQuery({
     queryKey: ["propiedad", id],
@@ -99,9 +103,12 @@ function PropiedadDetail() {
           </Button>
           <h1 className="text-xl font-bold">{form.nombre_comercial || form.nombre_legal}</h1>
         </div>
-        <Button onClick={() => save.mutate()} disabled={save.isPending}>
-          <Save className="mr-2 h-4 w-4" /> Guardar
-        </Button>
+        {permisos.puede_editar && (
+          <Button onClick={() => save.mutate()} disabled={save.isPending}>
+            <Save className="mr-2 h-4 w-4" /> Guardar
+          </Button>
+        )}
+
       </div>
       <Card>
         <CardHeader><CardTitle>Datos fiscales</CardTitle></CardHeader>
@@ -125,9 +132,17 @@ function PropiedadDetail() {
       </Card>
       <Card>
         <CardContent className="pt-6">
-          <ContactosManager table="propiedad_contactos" fkColumn="propiedad_id" fkValue={id} />
+          <ContactosManager
+            table="propiedad_contactos"
+            fkColumn="propiedad_id"
+            fkValue={id}
+            canCreate={permisos.puede_crear}
+            canEdit={permisos.puede_editar}
+            canDelete={permisos.puede_eliminar}
+          />
         </CardContent>
       </Card>
+
     </div>
   );
 }

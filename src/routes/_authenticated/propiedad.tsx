@@ -5,6 +5,8 @@ import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { usePermisos } from "@/lib/permisos";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -43,9 +45,11 @@ interface PropiedadRow {
 
 function PropiedadList() {
   const { claims } = useAuth();
+  const { permisos } = usePermisos();
   const clienteId = claims.cliente_id as string | undefined;
   const [q, setQ] = useState("");
   const qc = useQueryClient();
+
 
   const { data = [], isLoading } = useQuery({
     queryKey: ["propiedades", clienteId, q],
@@ -88,8 +92,9 @@ function PropiedadList() {
             Propiedades vinculadas a tu cliente.
           </p>
         </div>
-        <NuevaPropiedadDialog />
+        {permisos.puede_crear && <NuevaPropiedadDialog />}
       </div>
+
       <div className="relative max-w-md">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
         <Input

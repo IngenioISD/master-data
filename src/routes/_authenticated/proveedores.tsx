@@ -5,6 +5,8 @@ import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
+import { usePermisos } from "@/lib/permisos";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -40,7 +42,9 @@ interface Row {
 
 function ProveedoresList() {
   const { claims } = useAuth();
+  const { permisos } = usePermisos();
   const clienteId = claims.cliente_id as string | undefined;
+
   const [q, setQ] = useState("");
   const [tipo, setTipo] = useState<string>("__all");
   const qc = useQueryClient();
@@ -81,8 +85,9 @@ function ProveedoresList() {
           <h1 className="text-2xl font-bold tracking-tight">Proveedores</h1>
           <p className="text-sm text-muted-foreground">Proveedores vinculados a tu cliente.</p>
         </div>
-        <NuevoProveedorDialog />
+        {permisos.puede_crear && <NuevoProveedorDialog />}
       </div>
+
       <div className="flex flex-wrap gap-3">
         <div className="relative max-w-md flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

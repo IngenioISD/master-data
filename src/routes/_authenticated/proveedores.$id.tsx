@@ -11,6 +11,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ContactosManager } from "@/components/contactos-manager";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
+import { usePermisos } from "@/lib/permisos";
+
 
 const TIPOS = ["Material", "Servicios", "Mixto"] as const;
 
@@ -22,6 +24,8 @@ export const Route = createFileRoute("/_authenticated/proveedores/$id")({
 function ProveedorDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
+  const { permisos } = usePermisos();
+
   const { data, isLoading } = useQuery({
     queryKey: ["proveedor", id],
     queryFn: async () => {
@@ -85,9 +89,12 @@ function ProveedorDetail() {
           </Button>
           <h1 className="text-xl font-bold">{form.nombre_legal}</h1>
         </div>
-        <Button onClick={() => save.mutate()} disabled={save.isPending}>
-          <Save className="mr-2 h-4 w-4" /> Guardar
-        </Button>
+        {permisos.puede_editar && (
+          <Button onClick={() => save.mutate()} disabled={save.isPending}>
+            <Save className="mr-2 h-4 w-4" /> Guardar
+          </Button>
+        )}
+
       </div>
       <Card>
         <CardHeader><CardTitle>Datos fiscales</CardTitle></CardHeader>
@@ -116,7 +123,15 @@ function ProveedorDetail() {
       </Card>
       <Card>
         <CardContent className="pt-6">
-          <ContactosManager table="proveedor_contactos" fkColumn="proveedor_id" fkValue={id} />
+          <ContactosManager
+            table="proveedor_contactos"
+            fkColumn="proveedor_id"
+            fkValue={id}
+            canCreate={permisos.puede_crear}
+            canEdit={permisos.puede_editar}
+            canDelete={permisos.puede_eliminar}
+          />
+
         </CardContent>
       </Card>
     </div>
