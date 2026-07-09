@@ -123,7 +123,15 @@ function ProveedorDetail() {
       </Card>
       <Card>
         <CardContent className="pt-6">
-          <ContactosManager table="proveedor_contactos" fkColumn="proveedor_id" fkValue={id} />
+          <ContactosManager
+            table="proveedor_contactos"
+            fkColumn="proveedor_id"
+            fkValue={id}
+            canCreate={permisos.puede_crear}
+            canEdit={permisos.puede_editar}
+            canDelete={permisos.puede_eliminar}
+          />
+
         </CardContent>
       </Card>
     </div>
