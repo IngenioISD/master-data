@@ -42,7 +42,9 @@ interface Row {
 
 function ProveedoresList() {
   const { claims } = useAuth();
+  const { permisos } = usePermisos();
   const clienteId = claims.cliente_id as string | undefined;
+
   const [q, setQ] = useState("");
   const [tipo, setTipo] = useState<string>("__all");
   const qc = useQueryClient();
