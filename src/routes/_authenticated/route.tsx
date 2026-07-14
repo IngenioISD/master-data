@@ -116,7 +116,7 @@ function AppSidebar() {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel>Maestros</SidebarGroupLabel>
+          <SidebarGroupLabel></SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
               {NAV.map((item) => (
