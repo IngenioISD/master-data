@@ -62,8 +62,9 @@ function AuthenticatedLayout() {
   const { user, loading, signOut } = useAuth();
   const navigate = useNavigate();
   const { permisos, isLoading, error } = usePermisos();
+  const { data: usuarioCliente } = useUsuarioCliente(user?.id);
   const canAccess = permisos.puede_ver;
-
+  const nombreCompleto = fullName(usuarioCliente) || user?.email || "";
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/auth", replace: true });
@@ -103,18 +104,12 @@ function AuthenticatedLayout() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
-        <AppSidebar />
+        <AppSidebar nombreCompleto={nombreCompleto} onSignOut={handleSignOut} />
         <div className="flex flex-1 flex-col">
           <header className="flex h-14 items-center justify-between border-b bg-card px-4">
             <div className="flex items-center gap-2">
               <SidebarTrigger />
               <span className="text-sm font-semibold text-foreground">Datos Maestros</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="hidden text-xs text-muted-foreground sm:inline">{user?.email}</span>
-              <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                <LogOut className="mr-2 h-4 w-4" /> Salir
-              </Button>
             </div>
           </header>
           <main className="flex-1 p-6">
@@ -126,9 +121,10 @@ function AuthenticatedLayout() {
   );
 }
 
-function AppSidebar() {
+function AppSidebar({ nombreCompleto, onSignOut }: { nombreCompleto: string; onSignOut: () => void }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isActive = (url: string) => pathname === url || pathname.startsWith(url + "/");
+
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
