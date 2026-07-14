@@ -204,12 +204,6 @@ function NuevaPropiedadDialog() {
         nif: nif.trim(),
         nombre_legal: nombreLegal.trim(),
         nombre_comercial: (nombreComercial || nombreLegal).trim(),
-        via: dir.via || null,
-        numero: dir.numero || null,
-        cp: dir.cp || null,
-        municipio: dir.municipio || null,
-        provincia: dir.provincia || null,
-        pais: dir.pais || null,
       })
       .select("id")
       .single();
