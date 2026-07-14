@@ -134,7 +134,7 @@ function AppSidebar() {
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="px-2 py-2 text-[10px] uppercase tracking-wider text-sidebar-foreground/60">Ingenio</div>
+        <div className="px-2 py-2 text-[10px] uppercase tracking-wider text-sidebar-foreground/60">{"\n"}</div>
       </SidebarFooter>
     </Sidebar>
   );
