@@ -1,5 +1,6 @@
 import { createFileRoute, redirect, Outlet, Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Building2, FolderKanban, Truck, LogOut } from "lucide-react";
 import {
   Sidebar,
@@ -19,6 +20,28 @@ import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/integrations/supabase/client";
 import { usePermisos } from "@/lib/permisos";
+
+function useUsuarioCliente(userId: string | undefined) {
+  return useQuery({
+    queryKey: ["usuario_cliente", userId],
+    enabled: !!userId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("usuarios_cliente")
+        .select("nombre, apellido1, apellido2")
+        .eq("usuario_id", userId!)
+        .maybeSingle();
+      if (error) throw error;
+      return data as { nombre: string | null; apellido1: string | null; apellido2: string | null } | null;
+    },
+  });
+}
+
+function fullName(u: { nombre: string | null; apellido1: string | null; apellido2: string | null } | null | undefined) {
+  if (!u) return "";
+  return [u.nombre, u.apellido1, u.apellido2].filter(Boolean).join(" ").trim();
+}
+
 
 export const Route = createFileRoute("/_authenticated")({
   ssr: false,
