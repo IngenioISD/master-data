@@ -54,7 +54,7 @@ function ProveedoresList() {
     queryFn: async () => {
       let qb = supabase
         .from("proveedor_subcontrata")
-        .select("id, nif, nombre_legal, tipo_proveedor, municipio, cliente_proveedores!inner(cliente_id, activo)")
+        .select("id, nif, nombre_legal, nombre_comercial, tipo_proveedor, activo, municipio, cliente_proveedores!inner(cliente_id, activo)")
         .eq("cliente_proveedores.cliente_id", clienteId!);
       if (q) qb = qb.or(`nombre_legal.ilike.%${q}%,nif.ilike.%${q}%`);
       if (tipo !== "__all") qb = qb.eq("tipo_proveedor", tipo);
