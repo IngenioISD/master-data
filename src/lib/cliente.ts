@@ -18,6 +18,7 @@ export function useClienteId() {
         .select("cliente_id")
         .eq("user_id", userId!)
         .maybeSingle();
+      console.log("userId:", userId, "data:", data, "error:", error);
       if (error) throw error;
       return (data?.cliente_id as string | undefined) ?? null;
     },
