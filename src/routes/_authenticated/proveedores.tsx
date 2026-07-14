@@ -42,7 +42,7 @@ interface Row {
 
 function ProveedoresList() {
   const { permisos } = usePermisos();
-  const clienteId = useClienteId();
+  const { clienteId } = useClienteId();
 
   const [q, setQ] = useState("");
   const [tipo, setTipo] = useState<string>("__all");
@@ -142,7 +142,7 @@ function ProveedoresList() {
 }
 
 function NuevoProveedorDialog() {
-  const clienteId = useClienteId();
+  const { clienteId } = useClienteId();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [nif, setNif] = useState("");
