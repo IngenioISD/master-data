@@ -39,7 +39,6 @@ interface PropiedadRow {
   nif: string;
   nombre_legal: string;
   nombre_comercial: string | null;
-  municipio: string | null;
   clientes_propiedades: { activo: boolean | null; cliente_id: string }[];
 }
 
@@ -56,7 +55,7 @@ function PropiedadList() {
     queryFn: async () => {
       let qb = supabase
         .from("propiedad")
-        .select("id, nif, nombre_legal, nombre_comercial, municipio, clientes_propiedades!inner(cliente_id, activo)")
+        .select("id, nif, nombre_legal, nombre_comercial, clientes_propiedades!inner(cliente_id, activo)")
         .eq("clientes_propiedades.cliente_id", clienteId!);
       if (q) {
         qb = qb.or(
@@ -109,17 +108,16 @@ function PropiedadList() {
             <TableRow>
               <TableHead>Nombre comercial</TableHead>
               <TableHead>NIF</TableHead>
-              <TableHead>Municipio</TableHead>
               <TableHead>Activa</TableHead>
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading && (
-              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>
             )}
             {!isLoading && data.length === 0 && (
-              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
+              <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
             )}
             {data.map((p) => {
               const link = p.clientes_propiedades[0];
@@ -129,7 +127,6 @@ function PropiedadList() {
                     {p.nombre_comercial || p.nombre_legal}
                   </TableCell>
                   <TableCell>{p.nif}</TableCell>
-                  <TableCell>{p.municipio ?? "—"}</TableCell>
                   <TableCell>
                     <Switch
                       checked={!!link?.activo}
