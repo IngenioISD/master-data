@@ -63,18 +63,14 @@ function PropiedadList() {
       if (error) throw error;
       const rows = (data ?? [])
         .map((r: any) => ({ ...r.propiedad, activo: r.activo }))
-        .filter((p: any) => p && p.id) as PropiedadRow[];
-      const filtered = q
-        ? rows.filter((p) => {
-            const s = q.toLowerCase();
-            return (
-              (p.nombre_legal ?? "").toLowerCase().includes(s) ||
-              (p.nombre_comercial ?? "").toLowerCase().includes(s) ||
-              (p.nif ?? "").toLowerCase().includes(s)
-            );
-          })
-        : rows;
-      return filtered.sort((a, b) => (a.nombre_legal ?? "").localeCompare(b.nombre_legal ?? ""));
+        .filter((p: any) => p && p.id);
+      if (!q) return rows;
+      const s = q.toLowerCase();
+      return rows.filter((p: any) =>
+        (p.nombre_comercial ?? "").toLowerCase().includes(s) ||
+        (p.nombre_legal ?? "").toLowerCase().includes(s) ||
+        (p.nif ?? "").toLowerCase().includes(s)
+      );
     },
   });
 
