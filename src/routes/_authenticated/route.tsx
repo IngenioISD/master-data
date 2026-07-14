@@ -153,7 +153,21 @@ function AppSidebar({ nombreCompleto, onSignOut }: { nombreCompleto: string; onS
         </SidebarGroup>
       </SidebarContent>
       <SidebarFooter>
-        <div className="px-2 py-2 text-[10px] uppercase tracking-wider text-sidebar-foreground/60">{"\n"}</div>
+        <div className="flex items-center justify-between gap-2 px-2 py-2">
+          <span className="truncate text-xs font-medium text-sidebar-foreground" title={nombreCompleto}>
+            {nombreCompleto}
+          </span>
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-7 w-7 shrink-0 text-sidebar-foreground hover:bg-sidebar-accent"
+            onClick={onSignOut}
+            title="Cerrar sesión"
+            aria-label="Cerrar sesión"
+          >
+            <LogOut className="h-4 w-4" />
+          </Button>
+        </div>
       </SidebarFooter>
     </Sidebar>
   );
