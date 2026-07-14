@@ -121,8 +121,7 @@ function ProyectosList() {
 }
 
 function NuevoProyectoDialog() {
-  const { claims } = useAuth();
-  const clienteId = claims.cliente_id as string | undefined;
+  const clienteId = useClienteId();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [nombre, setNombre] = useState("");
