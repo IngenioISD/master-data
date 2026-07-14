@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth";
+import { useClienteId } from "@/lib/cliente";
 import { usePermisos } from "@/lib/permisos";
 
 import { Button } from "@/components/ui/button";
