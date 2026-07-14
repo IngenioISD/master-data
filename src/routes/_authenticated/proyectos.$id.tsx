@@ -141,7 +141,7 @@ function ProyectoDetail() {
               <>
                 <div className="space-y-1.5">
                   <Label>Código</Label>
-                  <Input value={data.codigo ?? ""} readOnly />
+                  <Input value={data.codigo_obra ?? ""} readOnly />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Fecha adjudicación</Label>
@@ -149,7 +149,7 @@ function ProyectoDetail() {
                 </div>
                 <div className="space-y-1.5">
                   <Label>Duración prevista (meses)</Label>
-                  <Input value={data.duracion_prevista_meses ?? ""} readOnly />
+                  <Input value={data.plazo_ejecucion_meses ?? ""} readOnly />
                 </div>
               </>
             )}
@@ -250,9 +250,9 @@ function AdjudicarDialog({
     setSubmitting(true);
     const { error } = await supabase.from("proyectos").update({
       estado: "Adjudicado",
-      codigo,
+      codigo_obra: codigo,
       fecha_adjudicacion: fecha,
-      duracion_prevista_meses: Number(meses),
+      plazo_ejecucion_meses: Number(meses),
       via: dir.via, numero: dir.numero, cp: dir.cp,
       municipio: dir.municipio, provincia: dir.provincia, pais: dir.pais,
     }).eq("id", proyectoId);
