@@ -29,7 +29,7 @@ function useUsuarioCliente(userId: string | undefined) {
       const { data, error } = await supabase
         .from("usuarios_cliente")
         .select("nombre, apellido1, apellido2")
-        .eq("usuario_id", userId!)
+        .eq("user_id", userId!)
         .maybeSingle();
       if (error) throw error;
       return data as { nombre: string | null; apellido1: string | null; apellido2: string | null } | null;
