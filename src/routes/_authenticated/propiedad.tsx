@@ -131,7 +131,6 @@ function PropiedadList() {
               <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
             )}
             {data.map((p) => {
-              const link = p.clientes_propiedades[0];
               return (
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">
@@ -140,10 +139,11 @@ function PropiedadList() {
                   <TableCell>{p.nif}</TableCell>
                   <TableCell>
                     <Switch
-                      checked={!!link?.activo}
+                      checked={!!p.activo}
                       onCheckedChange={(activo) => toggleActivo.mutate({ propiedadId: p.id, activo })}
                     />
                   </TableCell>
+
                   <TableCell className="text-right">
                     <Button asChild variant="ghost" size="sm">
                       <Link to="/propiedad/$id" params={{ id: p.id }}>Abrir</Link>
