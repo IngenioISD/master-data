@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Plus, Search } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
-import { useAuth } from "@/lib/auth";
+import { useClienteId } from "@/lib/cliente";
 import { usePermisos } from "@/lib/permisos";
 
 import { Button } from "@/components/ui/button";
@@ -41,9 +41,8 @@ interface Row {
 }
 
 function ProveedoresList() {
-  const { claims } = useAuth();
   const { permisos } = usePermisos();
-  const clienteId = claims.cliente_id as string | undefined;
+  const clienteId = useClienteId();
 
   const [q, setQ] = useState("");
   const [tipo, setTipo] = useState<string>("__all");
@@ -143,8 +142,7 @@ function ProveedoresList() {
 }
 
 function NuevoProveedorDialog() {
-  const { claims } = useAuth();
-  const clienteId = claims.cliente_id as string | undefined;
+  const clienteId = useClienteId();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [nif, setNif] = useState("");
