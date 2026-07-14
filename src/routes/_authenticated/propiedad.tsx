@@ -39,7 +39,10 @@ interface PropiedadRow {
   nif: string;
   nombre_legal: string;
   nombre_comercial: string | null;
-  clientes_propiedades: { activo: boolean | null; cliente_id: string }[];
+  municipio: string | null;
+  provincia: string | null;
+  pais: string | null;
+  activo: boolean | null;
 }
 
 function PropiedadList() {
@@ -53,20 +56,28 @@ function PropiedadList() {
     queryKey: ["propiedades", clienteId, q],
     enabled: !!clienteId,
     queryFn: async () => {
-      let qb = supabase
-        .from("propiedad")
-        .select("id, nif, nombre_legal, nombre_comercial, clientes_propiedades!inner(cliente_id, activo)")
-        .eq("clientes_propiedades.cliente_id", clienteId!);
-      if (q) {
-        qb = qb.or(
-          `nombre_legal.ilike.%${q}%,nombre_comercial.ilike.%${q}%,nif.ilike.%${q}%`,
-        );
-      }
-      const { data, error } = await qb.order("nombre_legal");
+      const { data, error } = await supabase
+        .from("clientes_propiedades")
+        .select("activo, propiedad:propiedad_id(id, nombre_comercial, nif, nombre_legal, municipio, provincia, pais)")
+        .eq("cliente_id", clienteId!);
       if (error) throw error;
-      return (data ?? []) as unknown as PropiedadRow[];
+      const rows = (data ?? [])
+        .map((r: any) => ({ ...r.propiedad, activo: r.activo }))
+        .filter((p: any) => p && p.id) as PropiedadRow[];
+      const filtered = q
+        ? rows.filter((p) => {
+            const s = q.toLowerCase();
+            return (
+              (p.nombre_legal ?? "").toLowerCase().includes(s) ||
+              (p.nombre_comercial ?? "").toLowerCase().includes(s) ||
+              (p.nif ?? "").toLowerCase().includes(s)
+            );
+          })
+        : rows;
+      return filtered.sort((a, b) => (a.nombre_legal ?? "").localeCompare(b.nombre_legal ?? ""));
     },
   });
+
 
   const toggleActivo = useMutation({
     mutationFn: async ({ propiedadId, activo }: { propiedadId: string; activo: boolean }) => {
@@ -120,7 +131,6 @@ function PropiedadList() {
               <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
             )}
             {data.map((p) => {
-              const link = p.clientes_propiedades[0];
               return (
                 <TableRow key={p.id}>
                   <TableCell className="font-medium">
@@ -129,10 +139,11 @@ function PropiedadList() {
                   <TableCell>{p.nif}</TableCell>
                   <TableCell>
                     <Switch
-                      checked={!!link?.activo}
+                      checked={!!p.activo}
                       onCheckedChange={(activo) => toggleActivo.mutate({ propiedadId: p.id, activo })}
                     />
                   </TableCell>
+
                   <TableCell className="text-right">
                     <Button asChild variant="ghost" size="sm">
                       <Link to="/propiedad/$id" params={{ id: p.id }}>Abrir</Link>
