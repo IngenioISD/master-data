@@ -43,7 +43,7 @@ interface Row {
 
 function ProyectosList() {
   const { permisos } = usePermisos();
-  const clienteId = useClienteId();
+  const { clienteId } = useClienteId();
 
   const [q, setQ] = useState("");
   const [estado, setEstado] = useState<string>("__all");
@@ -121,7 +121,7 @@ function ProyectosList() {
 }
 
 function NuevoProyectoDialog() {
-  const clienteId = useClienteId();
+  const { clienteId } = useClienteId();
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [nombre, setNombre] = useState("");
