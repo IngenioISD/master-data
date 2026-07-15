@@ -50,6 +50,7 @@ function PropiedadList() {
   const { permisos } = usePermisos();
   const [q, setQ] = useState("");
   const qc = useQueryClient();
+  const navigate = useNavigate();
 
 
   const { data = [], isLoading } = useQuery({
