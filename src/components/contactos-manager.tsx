@@ -17,7 +17,8 @@ import { toast } from "sonner";
 interface Contacto {
   id?: string;
   nombre: string;
-  apellidos: string | null;
+  apellido_1: string | null;
+  apellido_2: string | null;
   departamento: string | null;
   telefono: string | null;
   email: string | null;
