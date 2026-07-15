@@ -9,20 +9,43 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContactosManager } from "@/components/contactos-manager";
-import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
 import { usePermisos } from "@/lib/permisos";
-
 
 export const Route = createFileRoute("/_authenticated/propiedad/$id")({
   head: () => ({ meta: [{ title: "Propiedad · Datos Maestros" }] }),
   component: PropiedadDetail,
 });
 
+interface FormState {
+  nombre_legal: string;
+  nombre_comercial: string;
+  nif: string;
+  tipo_via: string;
+  nombre_via: string;
+  numero: string;
+  codigo_postal: string;
+  municipio: string;
+  provincia: string;
+  pais: string;
+}
+
+const EMPTY: FormState = {
+  nombre_legal: "",
+  nombre_comercial: "",
+  nif: "",
+  tipo_via: "",
+  nombre_via: "",
+  numero: "",
+  codigo_postal: "",
+  municipio: "",
+  provincia: "",
+  pais: "España",
+};
+
 function PropiedadDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
   const { permisos } = usePermisos();
-
 
   const { data, isLoading } = useQuery({
     queryKey: ["propiedad", id],
@@ -37,17 +60,7 @@ function PropiedadDetail() {
     },
   });
 
-  const [form, setForm] = useState<{ nombre_legal: string; nombre_comercial: string; nif: string } & DireccionFiscal>({
-    nombre_legal: "",
-    nombre_comercial: "",
-    nif: "",
-    via: "",
-    numero: "",
-    cp: "",
-    municipio: "",
-    provincia: "",
-    pais: "España",
-  });
+  const [form, setForm] = useState<FormState>(EMPTY);
 
   useEffect(() => {
     if (data) {
@@ -55,15 +68,18 @@ function PropiedadDetail() {
         nombre_legal: data.nombre_legal ?? "",
         nombre_comercial: data.nombre_comercial ?? "",
         nif: data.nif ?? "",
-        via: data.via ?? "",
-        numero: data.numero ?? "",
-        cp: data.cp ?? "",
-        municipio: data.municipio ?? "",
-        provincia: data.provincia ?? "",
-        pais: data.pais ?? "España",
+        tipo_via: (data as any).tipo_via ?? "",
+        nombre_via: (data as any).nombre_via ?? "",
+        numero: (data as any).numero ?? "",
+        codigo_postal: (data as any).codigo_postal ?? "",
+        municipio: (data as any).municipio ?? "",
+        provincia: (data as any).provincia ?? "",
+        pais: (data as any).pais ?? "España",
       });
     }
   }, [data]);
+
+  const set = <K extends keyof FormState>(k: K, v: string) => setForm((f) => ({ ...f, [k]: v }));
 
   const save = useMutation({
     mutationFn: async () => {
@@ -73,12 +89,13 @@ function PropiedadDetail() {
           nombre_legal: form.nombre_legal,
           nombre_comercial: form.nombre_comercial,
           nif: form.nif,
-          via: form.via,
-          numero: form.numero,
-          cp: form.cp,
-          municipio: form.municipio,
-          provincia: form.provincia,
-          pais: form.pais,
+          tipo_via: form.tipo_via || null,
+          nombre_via: form.nombre_via || null,
+          numero: form.numero || null,
+          codigo_postal: form.codigo_postal || null,
+          municipio: form.municipio || null,
+          provincia: form.provincia || null,
+          pais: form.pais || null,
         })
         .eq("id", id);
       if (error) throw error;
@@ -94,6 +111,8 @@ function PropiedadDetail() {
   if (isLoading) return <div className="text-sm text-muted-foreground">Cargando…</div>;
   if (!data) return <div className="text-sm text-muted-foreground">No encontrada.</div>;
 
+  const readOnly = !permisos.puede_editar;
+
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <div className="flex items-center justify-between">
@@ -108,30 +127,62 @@ function PropiedadDetail() {
             <Save className="mr-2 h-4 w-4" /> Guardar
           </Button>
         )}
-
       </div>
+
       <Card>
-        <CardHeader><CardTitle>Datos fiscales</CardTitle></CardHeader>
+        <CardHeader><CardTitle>Datos generales</CardTitle></CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             <div className="space-y-1.5">
               <Label>NIF</Label>
-              <Input value={form.nif} onChange={(e) => setForm({ ...form, nif: e.target.value })} />
+              <Input value={form.nif} onChange={(e) => set("nif", e.target.value)} disabled={readOnly} />
             </div>
             <div className="space-y-1.5 sm:col-span-2">
               <Label>Nombre legal</Label>
-              <Input value={form.nombre_legal} onChange={(e) => setForm({ ...form, nombre_legal: e.target.value })} />
+              <Input value={form.nombre_legal} onChange={(e) => set("nombre_legal", e.target.value)} disabled={readOnly} />
             </div>
             <div className="space-y-1.5 sm:col-span-3">
               <Label>Nombre comercial</Label>
-              <Input value={form.nombre_comercial} onChange={(e) => setForm({ ...form, nombre_comercial: e.target.value })} />
+              <Input value={form.nombre_comercial} onChange={(e) => set("nombre_comercial", e.target.value)} disabled={readOnly} />
             </div>
           </div>
-          <DireccionFiscalFields value={form} onChange={(d) => setForm({ ...form, ...d })} />
+
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-6 pt-2">
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label>Tipo de vía</Label>
+              <Input value={form.tipo_via} onChange={(e) => set("tipo_via", e.target.value)} disabled={readOnly} placeholder="Calle, Avenida…" />
+            </div>
+            <div className="space-y-1.5 sm:col-span-3">
+              <Label>Nombre de la vía</Label>
+              <Input value={form.nombre_via} onChange={(e) => set("nombre_via", e.target.value)} disabled={readOnly} />
+            </div>
+            <div className="space-y-1.5 sm:col-span-1">
+              <Label>Número</Label>
+              <Input value={form.numero} onChange={(e) => set("numero", e.target.value)} disabled={readOnly} />
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label>Código postal</Label>
+              <Input value={form.codigo_postal} onChange={(e) => set("codigo_postal", e.target.value)} disabled={readOnly} />
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label>Municipio</Label>
+              <Input value={form.municipio} onChange={(e) => set("municipio", e.target.value)} disabled={readOnly} />
+            </div>
+            <div className="space-y-1.5 sm:col-span-2">
+              <Label>Provincia</Label>
+              <Input value={form.provincia} onChange={(e) => set("provincia", e.target.value)} disabled={readOnly} />
+            </div>
+            <div className="space-y-1.5 sm:col-span-6">
+              <Label>País</Label>
+              <Input value={form.pais} onChange={(e) => set("pais", e.target.value)} disabled={readOnly} />
+            </div>
+          </div>
         </CardContent>
       </Card>
+
       <Card>
-        <CardContent className="pt-6">
+        <CardHeader><CardTitle>Contactos</CardTitle></CardHeader>
+        <CardContent>
           <ContactosManager
             table="propiedad_contactos"
             fkColumn="propiedad_id"
@@ -142,7 +193,6 @@ function PropiedadDetail() {
           />
         </CardContent>
       </Card>
-
     </div>
   );
 }

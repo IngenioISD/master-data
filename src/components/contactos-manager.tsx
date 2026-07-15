@@ -17,7 +17,8 @@ import { toast } from "sonner";
 interface Contacto {
   id?: string;
   nombre: string;
-  apellidos: string | null;
+  apellido_1: string | null;
+  apellido_2: string | null;
   departamento: string | null;
   telefono: string | null;
   email: string | null;
@@ -66,7 +67,8 @@ export function ContactosManager({
       if (c.id) {
         const { error } = await supabase.from(table).update({
           nombre: c.nombre,
-          apellidos: c.apellidos,
+          apellido_1: c.apellido_1,
+          apellido_2: c.apellido_2,
           departamento: c.departamento,
           telefono: c.telefono,
           email: c.email,
@@ -76,7 +78,8 @@ export function ContactosManager({
         const { error } = await supabase.from(table).insert({
           [fkColumn]: fkValue,
           nombre: c.nombre,
-          apellidos: c.apellidos,
+          apellido_1: c.apellido_1,
+          apellido_2: c.apellido_2,
           departamento: c.departamento,
           telefono: c.telefono,
           email: c.email,
@@ -114,7 +117,8 @@ export function ContactosManager({
             onClick={() =>
               setEditing({
                 nombre: "",
-                apellidos: "",
+                apellido_1: "",
+                apellido_2: "",
                 departamento: "Administración",
                 telefono: "",
                 email: "",
@@ -158,7 +162,7 @@ export function ContactosManager({
               ) : (
                 <TableRow key={c.id}>
                   <TableCell>
-                    {c.nombre} {c.apellidos ?? ""}
+                    {c.nombre} {c.apellido_1 ?? ""} {c.apellido_2 ?? ""}
                   </TableCell>
                   <TableCell>{c.departamento}</TableCell>
                   <TableCell>{c.telefono}</TableCell>
@@ -210,9 +214,14 @@ function ContactoEditRow({
             onChange={(e) => onChange({ ...value, nombre: e.target.value })}
           />
           <Input
-            placeholder="Apellidos"
-            value={value.apellidos ?? ""}
-            onChange={(e) => onChange({ ...value, apellidos: e.target.value })}
+            placeholder="Apellido 1"
+            value={value.apellido_1 ?? ""}
+            onChange={(e) => onChange({ ...value, apellido_1: e.target.value })}
+          />
+          <Input
+            placeholder="Apellido 2"
+            value={value.apellido_2 ?? ""}
+            onChange={(e) => onChange({ ...value, apellido_2: e.target.value })}
           />
         </div>
       </TableCell>
