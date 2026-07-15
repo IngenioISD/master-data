@@ -114,6 +114,7 @@ function PropiedadList() {
           <TableHeader>
             <TableRow>
               <TableHead>Nombre comercial</TableHead>
+              <TableHead>Municipio</TableHead>
               <TableHead>NIF</TableHead>
               <TableHead>Activa</TableHead>
               <TableHead></TableHead>
