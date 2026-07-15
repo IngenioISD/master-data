@@ -144,8 +144,8 @@ function PropiedadList() {
                   </TableCell>
 
                   <TableCell className="text-right">
-                    <Button asChild variant="ghost" size="sm">
-                      <Link to="/propiedad/$id" params={{ id: p.id }}>Abrir</Link>
+                    <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/propiedad/$id", params: { id: p.id } })}>
+                      Abrir
                     </Button>
                   </TableCell>
                 </TableRow>
