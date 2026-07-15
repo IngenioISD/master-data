@@ -115,13 +115,13 @@ function PropiedadList() {
               <TableHead>Nombre comercial</TableHead>
               <TableHead>Municipio</TableHead>
               <TableHead>NIF</TableHead>
-              <TableHead>Activa</TableHead>
+              {permisos.puede_editar && <TableHead>Activa</TableHead>}
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading && (
-              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={permisos.puede_editar ? 5 : 4} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>
             )}
             {!isLoading && data.length === 0 && (
               <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
