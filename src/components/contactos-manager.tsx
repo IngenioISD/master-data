@@ -162,7 +162,7 @@ export function ContactosManager({
               ) : (
                 <TableRow key={c.id}>
                   <TableCell>
-                    {c.nombre} {c.apellidos ?? ""}
+                    {c.nombre} {c.apellido_1 ?? ""} {c.apellido_2 ?? ""}
                   </TableCell>
                   <TableCell>{c.departamento}</TableCell>
                   <TableCell>{c.telefono}</TableCell>
