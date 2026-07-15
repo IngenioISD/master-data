@@ -122,10 +122,10 @@ function PropiedadList() {
           </TableHeader>
           <TableBody>
             {isLoading && (
-              <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>
+              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>
             )}
             {!isLoading && data.length === 0 && (
-              <TableRow><TableCell colSpan={4} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
+              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
             )}
             {data.map((p) => {
               return (
@@ -133,6 +133,7 @@ function PropiedadList() {
                   <TableCell className="font-medium">
                     {p.nombre_comercial || p.nombre_legal}
                   </TableCell>
+                  <TableCell>{p.municipio ?? ""}</TableCell>
                   <TableCell>{p.nif}</TableCell>
                   <TableCell>
                     <Switch
