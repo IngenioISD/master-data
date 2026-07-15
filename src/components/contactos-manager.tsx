@@ -214,9 +214,14 @@ function ContactoEditRow({
             onChange={(e) => onChange({ ...value, nombre: e.target.value })}
           />
           <Input
-            placeholder="Apellidos"
-            value={value.apellidos ?? ""}
-            onChange={(e) => onChange({ ...value, apellidos: e.target.value })}
+            placeholder="Apellido 1"
+            value={value.apellido_1 ?? ""}
+            onChange={(e) => onChange({ ...value, apellido_1: e.target.value })}
+          />
+          <Input
+            placeholder="Apellido 2"
+            value={value.apellido_2 ?? ""}
+            onChange={(e) => onChange({ ...value, apellido_2: e.target.value })}
           />
         </div>
       </TableCell>
