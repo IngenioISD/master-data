@@ -55,6 +55,7 @@ function PropiedadDetail() {
         .select("*")
         .eq("id", id)
         .maybeSingle();
+      console.log("data:", data, "error:", error);
       if (error) throw error;
       return data;
     },
