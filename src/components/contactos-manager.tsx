@@ -67,7 +67,8 @@ export function ContactosManager({
       if (c.id) {
         const { error } = await supabase.from(table).update({
           nombre: c.nombre,
-          apellidos: c.apellidos,
+          apellido_1: c.apellido_1,
+          apellido_2: c.apellido_2,
           departamento: c.departamento,
           telefono: c.telefono,
           email: c.email,
@@ -77,7 +78,8 @@ export function ContactosManager({
         const { error } = await supabase.from(table).insert({
           [fkColumn]: fkValue,
           nombre: c.nombre,
-          apellidos: c.apellidos,
+          apellido_1: c.apellido_1,
+          apellido_2: c.apellido_2,
           departamento: c.departamento,
           telefono: c.telefono,
           email: c.email,
