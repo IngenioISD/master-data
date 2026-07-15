@@ -10,6 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ContactosManager } from "@/components/contactos-manager";
 import { usePermisos } from "@/lib/permisos";
+import { useClienteId } from "@/lib/cliente";
 
 export const Route = createFileRoute("/_authenticated/propiedad/$id")({
   head: () => ({ meta: [{ title: "Propiedad · Datos Maestros" }] }),
@@ -46,18 +47,20 @@ function PropiedadDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
   const { permisos } = usePermisos();
+  const { clienteId } = useClienteId();
 
   const { data, isLoading } = useQuery({
-    queryKey: ["propiedad", id],
+    queryKey: ["propiedad", clienteId, id],
+    enabled: !!clienteId,
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("propiedad")
-        .select("*")
-        .eq("id", id)
+        .from("clientes_propiedades")
+        .select("propiedad:propiedad_id(id, nombre_comercial, nombre_legal, nif, tipo_via, nombre_via, numero, codigo_postal, municipio, provincia, pais)")
+        .eq("cliente_id", clienteId!)
+        .eq("propiedad_id", id)
         .maybeSingle();
-      console.log("data:", data, "error:", error);
       if (error) throw error;
-      return data;
+      return (data as any)?.propiedad ?? null;
     },
   });
 

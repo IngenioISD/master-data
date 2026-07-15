@@ -15,6 +15,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedProyectosRouteImport } from './routes/_authenticated/proyectos'
 import { Route as AuthenticatedProveedoresRouteImport } from './routes/_authenticated/proveedores'
 import { Route as AuthenticatedPropiedadRouteImport } from './routes/_authenticated/propiedad'
+import { Route as AuthenticatedPropiedadIndexRouteImport } from './routes/_authenticated/propiedad.index'
 import { Route as AuthenticatedProyectosIdRouteImport } from './routes/_authenticated/proyectos.$id'
 import { Route as AuthenticatedProveedoresIdRouteImport } from './routes/_authenticated/proveedores.$id'
 import { Route as AuthenticatedPropiedadIdRouteImport } from './routes/_authenticated/propiedad.$id'
@@ -49,6 +50,12 @@ const AuthenticatedPropiedadRoute = AuthenticatedPropiedadRouteImport.update({
   path: '/propiedad',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedPropiedadIndexRoute =
+  AuthenticatedPropiedadIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedPropiedadRoute,
+  } as any)
 const AuthenticatedProyectosIdRoute =
   AuthenticatedProyectosIdRouteImport.update({
     id: '/$id',
@@ -77,16 +84,17 @@ export interface FileRoutesByFullPath {
   '/propiedad/$id': typeof AuthenticatedPropiedadIdRoute
   '/proveedores/$id': typeof AuthenticatedProveedoresIdRoute
   '/proyectos/$id': typeof AuthenticatedProyectosIdRoute
+  '/propiedad/': typeof AuthenticatedPropiedadIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
-  '/propiedad': typeof AuthenticatedPropiedadRouteWithChildren
   '/proveedores': typeof AuthenticatedProveedoresRouteWithChildren
   '/proyectos': typeof AuthenticatedProyectosRouteWithChildren
   '/propiedad/$id': typeof AuthenticatedPropiedadIdRoute
   '/proveedores/$id': typeof AuthenticatedProveedoresIdRoute
   '/proyectos/$id': typeof AuthenticatedProyectosIdRoute
+  '/propiedad': typeof AuthenticatedPropiedadIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -99,6 +107,7 @@ export interface FileRoutesById {
   '/_authenticated/propiedad/$id': typeof AuthenticatedPropiedadIdRoute
   '/_authenticated/proveedores/$id': typeof AuthenticatedProveedoresIdRoute
   '/_authenticated/proyectos/$id': typeof AuthenticatedProyectosIdRoute
+  '/_authenticated/propiedad/': typeof AuthenticatedPropiedadIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -111,16 +120,17 @@ export interface FileRouteTypes {
     | '/propiedad/$id'
     | '/proveedores/$id'
     | '/proyectos/$id'
+    | '/propiedad/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/auth'
-    | '/propiedad'
     | '/proveedores'
     | '/proyectos'
     | '/propiedad/$id'
     | '/proveedores/$id'
     | '/proyectos/$id'
+    | '/propiedad'
   id:
     | '__root__'
     | '/'
@@ -132,6 +142,7 @@ export interface FileRouteTypes {
     | '/_authenticated/propiedad/$id'
     | '/_authenticated/proveedores/$id'
     | '/_authenticated/proyectos/$id'
+    | '/_authenticated/propiedad/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -184,6 +195,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPropiedadRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/propiedad/': {
+      id: '/_authenticated/propiedad/'
+      path: '/'
+      fullPath: '/propiedad/'
+      preLoaderRoute: typeof AuthenticatedPropiedadIndexRouteImport
+      parentRoute: typeof AuthenticatedPropiedadRoute
+    }
     '/_authenticated/proyectos/$id': {
       id: '/_authenticated/proyectos/$id'
       path: '/$id'
@@ -210,11 +228,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedPropiedadRouteChildren {
   AuthenticatedPropiedadIdRoute: typeof AuthenticatedPropiedadIdRoute
+  AuthenticatedPropiedadIndexRoute: typeof AuthenticatedPropiedadIndexRoute
 }
 
 const AuthenticatedPropiedadRouteChildren: AuthenticatedPropiedadRouteChildren =
   {
     AuthenticatedPropiedadIdRoute: AuthenticatedPropiedadIdRoute,
+    AuthenticatedPropiedadIndexRoute: AuthenticatedPropiedadIndexRoute,
   }
 
 const AuthenticatedPropiedadRouteWithChildren =
