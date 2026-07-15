@@ -117,7 +117,8 @@ export function ContactosManager({
             onClick={() =>
               setEditing({
                 nombre: "",
-                apellidos: "",
+                apellido_1: "",
+                apellido_2: "",
                 departamento: "Administración",
                 telefono: "",
                 email: "",
