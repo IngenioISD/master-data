@@ -108,13 +108,13 @@ function ProveedoresList() {
               <TableHead>NIF</TableHead>
               <TableHead>Tipo</TableHead>
               <TableHead>Municipio</TableHead>
-              <TableHead>Activo</TableHead>
+              {permisos.puede_editar && <TableHead>Activo</TableHead>}
               <TableHead></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>}
-            {!isLoading && data.length === 0 && <TableRow><TableCell colSpan={6} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>}
+            {isLoading && <TableRow><TableCell colSpan={permisos.puede_editar ? 6 : 5} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>}
+            {!isLoading && data.length === 0 && <TableRow><TableCell colSpan={permisos.puede_editar ? 6 : 5} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>}
             {data.map((p) => {
               const link = p.cliente_proveedores[0];
               return (
@@ -123,9 +123,11 @@ function ProveedoresList() {
                   <TableCell>{p.nif}</TableCell>
                   <TableCell>{p.tipo_proveedor && <Badge variant="secondary">{p.tipo_proveedor}</Badge>}</TableCell>
                   <TableCell>{p.municipio ?? "—"}</TableCell>
-                  <TableCell>
-                    <Switch checked={!!link?.activo} onCheckedChange={(activo) => toggle.mutate({ id: p.id, activo })} />
-                  </TableCell>
+                  {permisos.puede_editar && (
+                    <TableCell>
+                      <Switch checked={!!link?.activo} onCheckedChange={(activo) => toggle.mutate({ id: p.id, activo })} />
+                    </TableCell>
+                  )}
                   <TableCell className="text-right">
                     <Button asChild variant="ghost" size="sm">
                       <Link to="/proveedores/$id" params={{ id: p.id }}>Abrir</Link>

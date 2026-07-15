@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
 export interface Permisos {
@@ -9,49 +7,35 @@ export interface Permisos {
   puede_eliminar: boolean;
 }
 
-const EMPTY: Permisos = {
-  puede_ver: false,
-  puede_crear: false,
-  puede_editar: false,
-  puede_eliminar: false,
-};
-
 /**
- * Fuente única de permisos para el módulo `datos_maestros`.
- * Consulta `rol_permisos` filtrando por cliente_id (empresa_id del JWT),
- * rol_id (rol_id del JWT) y modulo = 'datos_maestros'. Mismo patrón que
- * los módulos de Actas y Albaranes.
+ * Roles con CRUD completo sobre Datos Maestros.
+ * El resto de roles son sólo lectura.
  */
+const CRUD_ROLES = new Set<string>([
+  "administracion",
+  "jefe_obra",
+  "jefe_produccion",
+]);
+
+function extractRol(claims: Record<string, unknown>): string | undefined {
+  const candidates = [claims.rol_id, (claims as any).rol, (claims as any).rol_nombre, (claims as any).rol_slug];
+  for (const c of candidates) {
+    if (typeof c === "string" && c.length > 0) return c;
+  }
+  return undefined;
+}
+
 export function usePermisos() {
-  const { claims, user } = useAuth();
-  const clienteId = claims.empresa_id as string | undefined;
-  const rolId = claims.rol_id as string | undefined;
+  const { claims, loading } = useAuth();
+  const rol = extractRol(claims as Record<string, unknown>);
+  const canCrud = !!rol && CRUD_ROLES.has(rol);
 
-  const query = useQuery<Permisos>({
-    queryKey: ["permisos-datos-maestros", clienteId, rolId, user?.id],
-    enabled: !!user && !!clienteId && !!rolId,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("rol_permisos")
-        .select("puede_ver, puede_crear, puede_editar, puede_eliminar")
-        .eq("cliente_id", clienteId!)
-        .eq("rol_id", rolId!)
-        .eq("modulo", "datos_maestros")
-        .maybeSingle();
-      if (error) throw error;
-      if (!data) return EMPTY;
-      return {
-        puede_ver: !!data.puede_ver,
-        puede_crear: !!data.puede_crear,
-        puede_editar: !!data.puede_editar,
-        puede_eliminar: !!data.puede_eliminar,
-      };
-    },
-  });
-
-  return {
-    permisos: query.data ?? EMPTY,
-    isLoading: query.isLoading,
-    error: query.error as Error | null,
+  const permisos: Permisos = {
+    puede_ver: true,
+    puede_crear: canCrud,
+    puede_editar: canCrud,
+    puede_eliminar: canCrud,
   };
+
+  return { permisos, isLoading: loading, error: null as Error | null };
 }
