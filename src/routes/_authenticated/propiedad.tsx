@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Plus, Search } from "lucide-react";
@@ -50,6 +50,7 @@ function PropiedadList() {
   const { permisos } = usePermisos();
   const [q, setQ] = useState("");
   const qc = useQueryClient();
+  const navigate = useNavigate();
 
 
   const { data = [], isLoading } = useQuery({
@@ -143,8 +144,8 @@ function PropiedadList() {
                   </TableCell>
 
                   <TableCell className="text-right">
-                    <Button asChild variant="ghost" size="sm">
-                      <Link to="/propiedad/$id" params={{ id: p.id }}>Abrir</Link>
+                    <Button variant="ghost" size="sm" onClick={() => navigate({ to: "/propiedad/$id", params: { id: p.id } })}>
+                      Abrir
                     </Button>
                   </TableCell>
                 </TableRow>
