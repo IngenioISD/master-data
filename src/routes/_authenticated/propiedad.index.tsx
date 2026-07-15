@@ -124,7 +124,7 @@ function PropiedadList() {
               <TableRow><TableCell colSpan={permisos.puede_editar ? 5 : 4} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>
             )}
             {!isLoading && data.length === 0 && (
-              <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
+              <TableRow><TableCell colSpan={permisos.puede_editar ? 5 : 4} className="text-center text-muted-foreground">Sin resultados</TableCell></TableRow>
             )}
             {data.map((p: PropiedadRow) => {
               return (
@@ -134,12 +134,14 @@ function PropiedadList() {
                   </TableCell>
                   <TableCell>{p.municipio ?? ""}</TableCell>
                   <TableCell>{p.nif}</TableCell>
-                  <TableCell>
-                    <Switch
-                      checked={!!p.activo}
-                      onCheckedChange={(activo) => toggleActivo.mutate({ propiedadId: p.id, activo })}
-                    />
-                  </TableCell>
+                  {permisos.puede_editar && (
+                    <TableCell>
+                      <Switch
+                        checked={!!p.activo}
+                        onCheckedChange={(activo) => toggleActivo.mutate({ propiedadId: p.id, activo })}
+                      />
+                    </TableCell>
+                  )}
 
                   <TableCell className="text-right">
                     <Button type="button" variant="ghost" size="sm" onClick={() => navigate({ to: "/propiedad/$id", params: { id: p.id } })}>
