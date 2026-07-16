@@ -55,7 +55,7 @@ function PropiedadList() {
   const navigate = useNavigate();
 
   const { data = [], isLoading } = useQuery({
-    queryKey: ["propiedades", clienteId, q],
+    queryKey: ["propiedades", clienteId, q, estado],
     enabled: !!clienteId,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -65,7 +65,8 @@ function PropiedadList() {
       if (error) throw error;
       const rows = (data ?? [])
         .map((r: any) => ({ ...r.propiedad, activo: r.activo }))
-        .filter((p: any) => p && p.id);
+        .filter((p: any) => p && p.id)
+        .filter((p: any) => (estado === "activas" ? !!p.activo : !p.activo));
       if (!q) return rows;
       const s = q.toLowerCase();
       return rows.filter((p: any) =>
