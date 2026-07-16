@@ -217,8 +217,9 @@ function PropiedadDetail() {
                   <Input value={form.nombre_comercial} onChange={(e) => set("nombre_comercial", e.target.value)} />
                 </div>
               </div>
-              <p className="text-sm font-semibold mt-4 mb-2">Domicilio fiscal</p>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-6 pt-2">
+              <div className="pt-6 mt-6 border-t">
+                <h3 className="text-sm font-semibold mb-4">Domicilio fiscal</h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-6">
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label>Tipo de vía</Label>
                   <Input
@@ -251,8 +252,10 @@ function PropiedadDetail() {
                   <Label>País</Label>
                   <Input value={form.pais} onChange={(e) => set("pais", e.target.value)} />
                 </div>
+                </div>
               </div>
             </>
+
           ) : (
             <>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
@@ -260,17 +263,20 @@ function PropiedadDetail() {
                 <Field label="Nombre legal" value={form.nombre_legal} colSpan="sm:col-span-2" />
                 <Field label="Nombre comercial" value={form.nombre_comercial} colSpan="sm:col-span-3" />
               </div>
-              <p className="text-sm font-semibold mt-4 mb-2">Domicilio fiscal</p>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-6 pt-2">
-                <Field label="Tipo de vía" value={form.tipo_via} colSpan="sm:col-span-2" />
-                <Field label="Nombre de la vía" value={form.nombre_via} colSpan="sm:col-span-3" />
-                <Field label="Número" value={form.numero} colSpan="sm:col-span-1" />
-                <Field label="Código postal" value={form.codigo_postal} colSpan="sm:col-span-2" />
-                <Field label="Municipio" value={form.municipio} colSpan="sm:col-span-2" />
-                <Field label="Provincia" value={form.provincia} colSpan="sm:col-span-2" />
-                <Field label="País" value={form.pais} colSpan="sm:col-span-6" />
+              <div className="pt-6 mt-6 border-t">
+                <h3 className="text-sm font-semibold mb-4">Domicilio fiscal</h3>
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-6">
+                  <Field label="Tipo de vía" value={form.tipo_via} colSpan="sm:col-span-2" />
+                  <Field label="Nombre de la vía" value={form.nombre_via} colSpan="sm:col-span-3" />
+                  <Field label="Número" value={form.numero} colSpan="sm:col-span-1" />
+                  <Field label="Código postal" value={form.codigo_postal} colSpan="sm:col-span-2" />
+                  <Field label="Municipio" value={form.municipio} colSpan="sm:col-span-2" />
+                  <Field label="Provincia" value={form.provincia} colSpan="sm:col-span-2" />
+                  <Field label="País" value={form.pais} colSpan="sm:col-span-6" />
+                </div>
               </div>
             </>
+
           )}
         </CardContent>
       </Card>
