@@ -28,6 +28,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/_authenticated/propiedad/")({
   head: () => ({ meta: [{ title: "Propiedad · Datos Maestros" }] }),
@@ -49,11 +50,12 @@ function PropiedadList() {
   const { clienteId } = useClienteId();
   const { permisos } = usePermisos();
   const [q, setQ] = useState("");
+  const [estado, setEstado] = useState<"activas" | "inactivas">("activas");
   const qc = useQueryClient();
   const navigate = useNavigate();
 
   const { data = [], isLoading } = useQuery({
-    queryKey: ["propiedades", clienteId, q],
+    queryKey: ["propiedades", clienteId, q, estado],
     enabled: !!clienteId,
     queryFn: async () => {
       const { data, error } = await supabase
@@ -63,7 +65,8 @@ function PropiedadList() {
       if (error) throw error;
       const rows = (data ?? [])
         .map((r: any) => ({ ...r.propiedad, activo: r.activo }))
-        .filter((p: any) => p && p.id);
+        .filter((p: any) => p && p.id)
+        .filter((p: any) => (estado === "activas" ? !!p.activo : !p.activo));
       if (!q) return rows;
       const s = q.toLowerCase();
       return rows.filter((p: any) =>
@@ -99,14 +102,22 @@ function PropiedadList() {
         {permisos.puede_crear && <NuevaPropiedadDialog />}
       </div>
 
-      <div className="relative max-w-md">
-        <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-        <Input
-          placeholder="Buscar por nombre o NIF…"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          className="pl-9"
-        />
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative max-w-md flex-1 min-w-[240px]">
+          <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Buscar por nombre o NIF…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="pl-9"
+          />
+        </div>
+        <Tabs value={estado} onValueChange={(v) => setEstado(v as "activas" | "inactivas")}>
+          <TabsList>
+            <TabsTrigger value="activas">Activas</TabsTrigger>
+            <TabsTrigger value="inactivas">Inactivas</TabsTrigger>
+          </TabsList>
+        </Tabs>
       </div>
       <Card className="overflow-hidden">
         <Table>
@@ -144,9 +155,11 @@ function PropiedadList() {
                   )}
 
                   <TableCell className="text-right">
-                    <Button type="button" variant="ghost" size="sm" onClick={() => navigate({ to: "/propiedad/$id", params: { id: p.id } })}>
-                      Abrir
-                    </Button>
+                    {p.activo && (
+                      <Button type="button" variant="ghost" size="sm" onClick={() => navigate({ to: "/propiedad/$id", params: { id: p.id } })}>
+                        Abrir
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               );
