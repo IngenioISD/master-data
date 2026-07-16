@@ -452,9 +452,12 @@ function AddContactoDialog({
                       <span className="text-xs text-muted-foreground">
                         {c.departamento ?? "—"} · {c.email ?? "sin email"}
                       </span>
-                      {already && <span className="text-[10px] font-bold text-lima uppercase mt-0.5">Agregado</span>}
                     </div>
-                    {!already && (
+                    {already ? (
+                      <span className="rounded-full border border-border bg-muted px-2.5 py-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                        Agregado
+                      </span>
+                    ) : (
                       <Button
                         size="sm"
                         variant="outline"
@@ -466,6 +469,7 @@ function AddContactoDialog({
                       </Button>
                     )}
                   </div>
+
                 );
               })}
             </div>
