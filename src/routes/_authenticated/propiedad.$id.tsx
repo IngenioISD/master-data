@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ContactosManager } from "@/components/contactos-manager";
+import { PropiedadContactosManager } from "@/components/propiedad-contactos-manager";
 import { usePermisos } from "@/lib/permisos";
 import { useClienteId } from "@/lib/cliente";
 
@@ -247,14 +247,17 @@ function PropiedadDetail() {
       <Card>
         <CardHeader><CardTitle>Contactos</CardTitle></CardHeader>
         <CardContent>
-          <ContactosManager
-            table="propiedad_contactos"
-            fkColumn="propiedad_id"
-            fkValue={id}
-            canCreate={permisos.puede_crear}
-            canEdit={permisos.puede_editar}
-            canDelete={permisos.puede_eliminar}
-          />
+          {clienteId ? (
+            <PropiedadContactosManager
+              propiedadId={id}
+              clienteId={clienteId}
+              canCreate={permisos.puede_crear}
+              canEdit={permisos.puede_editar}
+              canDelete={permisos.puede_eliminar}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">Cargando…</p>
+          )}
         </CardContent>
       </Card>
     </div>
