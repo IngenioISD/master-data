@@ -217,7 +217,9 @@ function PropiedadDetail() {
                   <Input value={form.nombre_comercial} onChange={(e) => set("nombre_comercial", e.target.value)} />
                 </div>
               </div>
-              <p className="text-sm font-semibold pt-2">Domicilio fiscal</p>
+              <div className="border-t pt-3 mt-1">
+                <p className="text-sm font-semibold">Domicilio fiscal</p>
+              </div>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-6 pt-2">
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label>Tipo de vía</Label>
