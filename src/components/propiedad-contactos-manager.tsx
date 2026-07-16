@@ -219,7 +219,7 @@ export function PropiedadContactosManager({
                         variant="ghost"
                         onClick={() => unlink.mutate(c.id)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Unlink className="h-4 w-4" />
                       </Button>
                     )}
                   </TableCell>
