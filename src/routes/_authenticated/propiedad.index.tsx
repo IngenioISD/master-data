@@ -155,9 +155,11 @@ function PropiedadList() {
                   )}
 
                   <TableCell className="text-right">
-                    <Button type="button" variant="ghost" size="sm" onClick={() => navigate({ to: "/propiedad/$id", params: { id: p.id } })}>
-                      Abrir
-                    </Button>
+                    {p.activo && (
+                      <Button type="button" variant="ghost" size="sm" onClick={() => navigate({ to: "/propiedad/$id", params: { id: p.id } })}>
+                        Abrir
+                      </Button>
+                    )}
                   </TableCell>
                 </TableRow>
               );
