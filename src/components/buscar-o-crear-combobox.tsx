@@ -21,6 +21,7 @@ interface Props<T> {
   getSubLabel?: (item: T) => string;
   getValue: (item: T) => string;
   value?: string | null;
+  selectedLabel?: string | null;
   onSelect: (item: T) => void;
   onCreateNew?: (term: string) => void;
   createLabel?: string;
@@ -34,6 +35,7 @@ export function BuscarOCrearCombobox<T>({
   getSubLabel,
   getValue,
   value,
+  selectedLabel,
   onSelect,
   onCreateNew,
   createLabel = "Crear nuevo",
@@ -58,7 +60,7 @@ export function BuscarOCrearCombobox<T>({
           role="combobox"
           className="w-full justify-between"
         >
-          {selected ? getLabel(selected) : value ? value : placeholder}
+          {selected ? getLabel(selected) : selectedLabel ? selectedLabel : value ? (placeholder) : placeholder}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>

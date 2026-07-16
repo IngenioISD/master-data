@@ -240,6 +240,24 @@ function ProyectoDetail() {
 function PropiedadPicker({ value, onChange }: { value: string | null; onChange: (v: string) => void }) {
   const { claims } = useAuth();
   const clienteId = claims.cliente_id as string | undefined;
+
+  const { data: selectedInfo } = useQuery({
+    queryKey: ["propiedad-picker-selected", clienteId, value],
+    enabled: !!value && !!clienteId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("propiedad")
+        .select("id, nombre_legal, clientes_propiedades!inner(cliente_id, nombre_comercial)")
+        .eq("id", value!)
+        .eq("clientes_propiedades.cliente_id", clienteId!)
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) return null;
+      const cp = Array.isArray(data.clientes_propiedades) ? data.clientes_propiedades[0] : data.clientes_propiedades;
+      return { label: (cp?.nombre_comercial as string | null) || data.nombre_legal };
+    },
+  });
+
   return (
     <BuscarOCrearCombobox
       placeholder="Buscar propiedad…"
@@ -248,17 +266,26 @@ function PropiedadPicker({ value, onChange }: { value: string | null; onChange: 
         if (!clienteId) return [];
         let qb = supabase
           .from("propiedad")
-          .select("id, nif, nombre_legal, nombre_comercial, clientes_propiedades!inner(cliente_id)")
+          .select("id, nif, nombre_legal, clientes_propiedades!inner(cliente_id, nombre_comercial)")
           .eq("clientes_propiedades.cliente_id", clienteId);
-        if (term) qb = qb.or(`nombre_legal.ilike.%${term}%,nombre_comercial.ilike.%${term}%,nif.ilike.%${term}%`);
+        if (term) qb = qb.or(`nombre_legal.ilike.%${term}%,nif.ilike.%${term}%`);
         const { data, error } = await qb.limit(20);
         if (error) throw error;
-        return (data ?? []) as { id: string; nif: string; nombre_legal: string; nombre_comercial: string | null }[];
+        return (data ?? []).map((p) => {
+          const cp = Array.isArray(p.clientes_propiedades) ? p.clientes_propiedades[0] : p.clientes_propiedades;
+          return {
+            id: p.id,
+            nif: p.nif,
+            nombre_legal: p.nombre_legal,
+            nombre_comercial: (cp?.nombre_comercial as string | null) ?? null,
+          };
+        });
       }}
       getLabel={(p) => p.nombre_comercial || p.nombre_legal}
       getSubLabel={(p) => p.nif}
       getValue={(p) => p.id}
       value={value}
+      selectedLabel={selectedInfo?.label ?? null}
       onSelect={(p) => onChange(p.id)}
     />
   );
