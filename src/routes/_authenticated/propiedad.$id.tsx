@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { PropiedadContactosManager } from "@/components/propiedad-contactos-manager";
 import { usePermisos } from "@/lib/permisos";
 import { useClienteId } from "@/lib/cliente";
@@ -159,9 +160,16 @@ function PropiedadDetail() {
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle>Datos generales</CardTitle>
           {canEdit && !editing && (
-            <Button size="icon" variant="ghost" onClick={() => setEditMode(true)} aria-label="Editar">
-              <Pencil className="h-4 w-4" />
-            </Button>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost" onClick={() => setEditMode(true)} aria-label="Editar">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Editar</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           {editing && (
             <div className="flex gap-2">
