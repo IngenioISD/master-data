@@ -176,7 +176,7 @@ function NuevaPropiedadDialog() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [nif, setNif] = useState("");
-  const [existente, setExistente] = useState<{ id: string; nombre_legal: string; nombre_comercial: string | null } | null>(null);
+  const [existente, setExistente] = useState<{ id: string; nombre_legal: string } | null>(null);
   const [checked, setChecked] = useState(false);
   const [nombreLegal, setNombreLegal] = useState("");
   const [nombreComercial, setNombreComercial] = useState("");
@@ -189,7 +189,7 @@ function NuevaPropiedadDialog() {
     if (!nif.trim()) return;
     const { data, error } = await supabase
       .from("propiedad")
-      .select("id, nombre_legal, nombre_comercial")
+      .select("id, nombre_legal")
       .eq("nif", nif.trim())
       .maybeSingle();
     if (error) {
@@ -207,6 +207,7 @@ function NuevaPropiedadDialog() {
       cliente_id: clienteId,
       propiedad_id: existente.id,
       activo: true,
+      nombre_comercial: (nombreComercial || existente.nombre_legal).trim(),
     });
     setSubmitting(false);
     if (error) {
@@ -226,7 +227,6 @@ function NuevaPropiedadDialog() {
       .insert({
         nif: nif.trim(),
         nombre_legal: nombreLegal.trim(),
-        nombre_comercial: (nombreComercial || nombreLegal).trim(),
       })
       .select("id")
       .single();
@@ -239,6 +239,7 @@ function NuevaPropiedadDialog() {
       cliente_id: clienteId,
       propiedad_id: nueva.id,
       activo: true,
+      nombre_comercial: (nombreComercial || nombreLegal).trim(),
     });
     setSubmitting(false);
     if (linkErr) {
