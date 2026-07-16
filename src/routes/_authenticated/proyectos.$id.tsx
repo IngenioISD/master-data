@@ -13,13 +13,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import {
-  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
 import { BuscarOCrearCombobox } from "@/components/buscar-o-crear-combobox";
 import { usePermisos } from "@/lib/permisos";
-
 
 const ESTADOS = ["En estudio", "Adjudicado", "Perdido", "Finalizado"] as const;
 
@@ -32,7 +36,6 @@ function ProyectoDetail() {
   const { id } = Route.useParams();
   const qc = useQueryClient();
   const { permisos } = usePermisos();
-
 
   const { data, isLoading } = useQuery({
     queryKey: ["proyecto", id],
@@ -60,8 +63,10 @@ function ProyectoDetail() {
     queryKey: ["catalogo", "tipo_obra"],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from("catalogo").select("id, valor, etiqueta")
-        .eq("categoria", "tipo_obra").order("etiqueta");
+        .from("catalogo")
+        .select("id, codigo, etiqueta")
+        .eq("categoria", "tipo_obra")
+        .order("etiqueta");
       if (error) throw error;
       return (data ?? []) as { id: string; valor: string; etiqueta: string | null }[];
     },
@@ -69,9 +74,14 @@ function ProyectoDetail() {
 
   const save = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("proyectos").update({
-        nombre, tipo_obra: tipoObra, propiedad_id: propiedadId,
-      }).eq("id", id);
+      const { error } = await supabase
+        .from("proyectos")
+        .update({
+          nombre,
+          tipo_obra: tipoObra,
+          propiedad_id: propiedadId,
+        })
+        .eq("id", id);
       if (error) throw error;
     },
     onSuccess: () => {
@@ -103,7 +113,9 @@ function ProyectoDetail() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/proyectos"><ArrowLeft className="mr-2 h-4 w-4" /> Volver</Link>
+            <Link to="/proyectos">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Volver
+            </Link>
           </Button>
           <h1 className="text-xl font-bold">{nombre}</h1>
           {data.estado && <Badge variant="outline">{data.estado}</Badge>}
@@ -113,11 +125,12 @@ function ProyectoDetail() {
             <Save className="mr-2 h-4 w-4" /> Guardar
           </Button>
         )}
-
       </div>
 
       <Card>
-        <CardHeader><CardTitle>General</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>General</CardTitle>
+        </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <div className="space-y-1.5">
@@ -127,9 +140,15 @@ function ProyectoDetail() {
             <div className="space-y-1.5">
               <Label>Tipo de obra</Label>
               <Select value={tipoObra} onValueChange={setTipoObra}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
                 <SelectContent>
-                  {tipos.map((t) => <SelectItem key={t.id} value={t.valor}>{t.etiqueta || t.valor}</SelectItem>)}
+                  {tipos.map((t) => (
+                    <SelectItem key={t.id} value={t.codigo}>
+                      {t.etiqueta || t.codigo}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -167,18 +186,25 @@ function ProyectoDetail() {
                 }
               }}
             >
-              <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+              <SelectTrigger className="w-56">
+                <SelectValue />
+              </SelectTrigger>
               <SelectContent>
-                {ESTADOS.map((e) => <SelectItem key={e} value={e}>{e}</SelectItem>)}
+                {ESTADOS.map((e) => (
+                  <SelectItem key={e} value={e}>
+                    {e}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
-
           </div>
         </CardContent>
       </Card>
 
       <Card>
-        <CardHeader><CardTitle>Proveedores asignados</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Proveedores asignados</CardTitle>
+        </CardHeader>
         <CardContent>
           <ProveedoresAsignados
             proyectoId={id}
@@ -187,7 +213,6 @@ function ProyectoDetail() {
             canDelete={permisos.puede_eliminar}
           />
         </CardContent>
-
       </Card>
 
       <AdjudicarDialog
@@ -232,9 +257,15 @@ function PropiedadPicker({ value, onChange }: { value: string | null; onChange: 
 }
 
 function AdjudicarDialog({
-  open, onOpenChange, proyectoId, onDone,
+  open,
+  onOpenChange,
+  proyectoId,
+  onDone,
 }: {
-  open: boolean; onOpenChange: (o: boolean) => void; proyectoId: string; onDone: () => void;
+  open: boolean;
+  onOpenChange: (o: boolean) => void;
+  proyectoId: string;
+  onDone: () => void;
 }) {
   const [codigo, setCodigo] = useState("");
   const [fecha, setFecha] = useState("");
@@ -248,16 +279,26 @@ function AdjudicarDialog({
       return;
     }
     setSubmitting(true);
-    const { error } = await supabase.from("proyectos").update({
-      estado: "Adjudicado",
-      codigo_obra: codigo,
-      fecha_adjudicacion: fecha,
-      plazo_ejecucion_meses: Number(meses),
-      via: dir.via, numero: dir.numero, cp: dir.cp,
-      municipio: dir.municipio, provincia: dir.provincia, pais: dir.pais,
-    }).eq("id", proyectoId);
+    const { error } = await supabase
+      .from("proyectos")
+      .update({
+        estado: "Adjudicado",
+        codigo_obra: codigo,
+        fecha_adjudicacion: fecha,
+        plazo_ejecucion_meses: Number(meses),
+        via: dir.via,
+        numero: dir.numero,
+        cp: dir.cp,
+        municipio: dir.municipio,
+        provincia: dir.provincia,
+        pais: dir.pais,
+      })
+      .eq("id", proyectoId);
     setSubmitting(false);
-    if (error) { toast.error(error.message); return; }
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
     toast.success("Proyecto adjudicado");
     onDone();
   }
@@ -267,9 +308,7 @@ function AdjudicarDialog({
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>Adjudicar proyecto</DialogTitle>
-          <DialogDescription>
-            Para pasar el proyecto a Adjudicado necesitas completar estos datos.
-          </DialogDescription>
+          <DialogDescription>Para pasar el proyecto a Adjudicado necesitas completar estos datos.</DialogDescription>
         </DialogHeader>
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
           <div className="space-y-1.5">
@@ -290,8 +329,12 @@ function AdjudicarDialog({
           <DireccionFiscalFields value={dir} onChange={setDir} required />
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={() => onOpenChange(false)}>Cancelar</Button>
-          <Button onClick={confirmar} disabled={submitting}>Confirmar adjudicación</Button>
+          <Button variant="ghost" onClick={() => onOpenChange(false)}>
+            Cancelar
+          </Button>
+          <Button onClick={confirmar} disabled={submitting}>
+            Confirmar adjudicación
+          </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
@@ -316,7 +359,6 @@ function ProveedoresAsignados({
   canEdit?: boolean;
   canDelete?: boolean;
 }) {
-
   const { claims } = useAuth();
   const clienteId = claims.cliente_id as string | undefined;
   const qc = useQueryClient();
@@ -337,11 +379,16 @@ function ProveedoresAsignados({
   const asignar = useMutation({
     mutationFn: async (proveedorId: string) => {
       const { error } = await supabase.from("proyecto_proveedores").insert({
-        proyecto_id: proyectoId, proveedor_id: proveedorId, activo: true,
+        proyecto_id: proyectoId,
+        proveedor_id: proveedorId,
+        activo: true,
       });
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey }); toast.success("Proveedor asignado"); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey });
+      toast.success("Proveedor asignado");
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -359,7 +406,10 @@ function ProveedoresAsignados({
       const { error } = await supabase.from("proyecto_proveedores").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => { qc.invalidateQueries({ queryKey }); toast.success("Eliminado"); },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey });
+      toast.success("Eliminado");
+    },
     onError: (e: Error) => toast.error(e.message),
   });
 
@@ -403,14 +453,36 @@ function ProveedoresAsignados({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Cargando…</TableCell></TableRow>}
-            {!isLoading && data.length === 0 && <TableRow><TableCell colSpan={5} className="text-center text-muted-foreground">Sin proveedores asignados</TableCell></TableRow>}
+            {isLoading && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  Cargando…
+                </TableCell>
+              </TableRow>
+            )}
+            {!isLoading && data.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                  Sin proveedores asignados
+                </TableCell>
+              </TableRow>
+            )}
             {data.map((pp) => (
               <TableRow key={pp.id}>
                 <TableCell className="font-medium">{pp.proveedor_subcontrata?.nombre_legal}</TableCell>
                 <TableCell>{pp.proveedor_subcontrata?.nif}</TableCell>
-                <TableCell>{pp.proveedor_subcontrata?.tipo_proveedor && <Badge variant="secondary">{pp.proveedor_subcontrata.tipo_proveedor}</Badge>}</TableCell>
-                <TableCell><Switch checked={!!pp.activo} disabled={!canEdit} onCheckedChange={(activo) => toggle.mutate({ id: pp.id, activo })} /></TableCell>
+                <TableCell>
+                  {pp.proveedor_subcontrata?.tipo_proveedor && (
+                    <Badge variant="secondary">{pp.proveedor_subcontrata.tipo_proveedor}</Badge>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <Switch
+                    checked={!!pp.activo}
+                    disabled={!canEdit}
+                    onCheckedChange={(activo) => toggle.mutate({ id: pp.id, activo })}
+                  />
+                </TableCell>
                 <TableCell className="text-right">
                   {canDelete && (
                     <Button size="icon" variant="ghost" onClick={() => eliminar.mutate(pp.id)}>
@@ -418,7 +490,6 @@ function ProveedoresAsignados({
                     </Button>
                   )}
                 </TableCell>
-
               </TableRow>
             ))}
           </TableBody>
