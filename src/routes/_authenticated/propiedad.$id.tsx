@@ -262,7 +262,9 @@ function PropiedadDetail() {
                 <Field label="Nombre legal" value={form.nombre_legal} colSpan="sm:col-span-2" />
                 <Field label="Nombre comercial" value={form.nombre_comercial} colSpan="sm:col-span-3" />
               </div>
-              <p className="text-sm font-semibold pt-2">Domicilio fiscal</p>
+              <div className="border-t pt-3 mt-1">
+                <p className="text-sm font-semibold">Domicilio fiscal</p>
+              </div>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-6 pt-2">
                 <Field label="Tipo de vía" value={form.tipo_via} colSpan="sm:col-span-2" />
                 <Field label="Nombre de la vía" value={form.nombre_via} colSpan="sm:col-span-3" />
