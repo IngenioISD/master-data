@@ -28,6 +28,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const Route = createFileRoute("/_authenticated/propiedad/")({
   head: () => ({ meta: [{ title: "Propiedad · Datos Maestros" }] }),
