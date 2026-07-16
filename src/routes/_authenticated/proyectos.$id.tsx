@@ -25,7 +25,15 @@ import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direcc
 import { BuscarOCrearCombobox } from "@/components/buscar-o-crear-combobox";
 import { usePermisos } from "@/lib/permisos";
 
-const ESTADOS = ["En estudio", "Adjudicado", "Perdido", "Finalizado"] as const;
+const ESTADOS = [
+  { value: "en_estudio", label: "En estudio" },
+  { value: "adjudicado", label: "Adjudicado" },
+  { value: "perdido", label: "Perdido" },
+  { value: "finalizado", label: "Finalizado" },
+] as const;
+
+const estadoLabel = (v: string | null | undefined) =>
+  ESTADOS.find((e) => e.value === v)?.label ?? v ?? "";
 
 export const Route = createFileRoute("/_authenticated/proyectos/$id")({
   head: () => ({ meta: [{ title: "Proyecto · Datos Maestros" }] }),
@@ -118,7 +126,7 @@ function ProyectoDetail() {
             </Link>
           </Button>
           <h1 className="text-xl font-bold">{nombre}</h1>
-          {data.estado && <Badge variant="outline">{data.estado}</Badge>}
+          {data.estado && <Badge variant="outline">{estadoLabel(data.estado)}</Badge>}
         </div>
         {permisos.puede_editar && (
           <Button onClick={() => save.mutate()} disabled={save.isPending}>
@@ -156,7 +164,7 @@ function ProyectoDetail() {
               <Label>Propiedad</Label>
               <PropiedadPicker value={propiedadId} onChange={setPropiedadId} />
             </div>
-            {data.estado === "Adjudicado" && (
+            {data.estado === "adjudicado" && (
               <>
                 <div className="space-y-1.5">
                   <Label>Código</Label>
@@ -176,10 +184,10 @@ function ProyectoDetail() {
           <div className="flex items-center gap-3 border-t pt-4">
             <Label className="m-0">Estado:</Label>
             <Select
-              value={data.estado ?? "En estudio"}
+              value={data.estado ?? "en_estudio"}
               disabled={!permisos.puede_editar}
               onValueChange={(v) => {
-                if (v === "Adjudicado" && data.estado !== "Adjudicado") {
+                if (v === "adjudicado" && data.estado !== "adjudicado") {
                   setAdjudicarOpen(true);
                 } else {
                   cambiarEstado.mutate(v);
@@ -191,8 +199,8 @@ function ProyectoDetail() {
               </SelectTrigger>
               <SelectContent>
                 {ESTADOS.map((e) => (
-                  <SelectItem key={e} value={e}>
-                    {e}
+                  <SelectItem key={e.value} value={e.value}>
+                    {e.label}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -282,7 +290,7 @@ function AdjudicarDialog({
     const { error } = await supabase
       .from("proyectos")
       .update({
-        estado: "Adjudicado",
+        estado: "adjudicado",
         codigo_obra: codigo,
         fecha_adjudicacion: fecha,
         plazo_ejecucion_meses: Number(meses),
