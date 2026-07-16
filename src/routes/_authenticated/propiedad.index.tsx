@@ -50,6 +50,7 @@ function PropiedadList() {
   const { clienteId } = useClienteId();
   const { permisos } = usePermisos();
   const [q, setQ] = useState("");
+  const [estado, setEstado] = useState<"activas" | "inactivas">("activas");
   const qc = useQueryClient();
   const navigate = useNavigate();
 
