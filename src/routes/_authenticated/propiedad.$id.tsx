@@ -200,7 +200,7 @@ function PropiedadDetail() {
             </div>
           )}
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-2">
           {editing ? (
             <>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
@@ -217,9 +217,7 @@ function PropiedadDetail() {
                   <Input value={form.nombre_comercial} onChange={(e) => set("nombre_comercial", e.target.value)} />
                 </div>
               </div>
-              <div className="border-t pt-2 -mt-1">
-                <p className="text-sm font-semibold">Domicilio fiscal</p>
-              </div>
+              <p className="text-sm font-semibold -mt-2">Domicilio fiscal</p>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-6 pt-2">
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label>Tipo de vía</Label>
@@ -262,9 +260,7 @@ function PropiedadDetail() {
                 <Field label="Nombre legal" value={form.nombre_legal} colSpan="sm:col-span-2" />
                 <Field label="Nombre comercial" value={form.nombre_comercial} colSpan="sm:col-span-3" />
               </div>
-              <div className="border-t pt-2 -mt-1">
-                <p className="text-sm font-semibold">Domicilio fiscal</p>
-              </div>
+              <p className="text-sm font-semibold -mt-2">Domicilio fiscal</p>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-6 pt-2">
                 <Field label="Tipo de vía" value={form.tipo_via} colSpan="sm:col-span-2" />
                 <Field label="Nombre de la vía" value={form.nombre_via} colSpan="sm:col-span-3" />
