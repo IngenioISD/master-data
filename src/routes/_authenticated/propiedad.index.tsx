@@ -285,13 +285,13 @@ function NuevaPropiedadDialog() {
             <div className="space-y-3 rounded-md border bg-muted/40 p-3 text-sm">
               <div>
                 <p className="font-medium">{existente.nombre_legal}</p>
-                <p className="text-xs text-muted-foreground">Ya existe en el catálogo. Vinculala a tu cliente sin duplicar.</p>
+                <p className="text-xs text-muted-foreground">(Ya existe en el catálogo)</p>
               </div>
               <div className="space-y-1.5">
                 <Label htmlFor="nc-link">Nombre comercial</Label>
                 <Input id="nc-link" placeholder={existente.nombre_legal || "(igual que nombre legal si vacío)"} value={nombreComercial} onChange={(e) => setNombreComercial(e.target.value)} />
               </div>
-              <Button onClick={vincular} disabled={submitting}>Vincular a mi cliente</Button>
+              <Button onClick={vincular} disabled={submitting}>Vincular</Button>
             </div>
           )}
           {checked && !existente && (
