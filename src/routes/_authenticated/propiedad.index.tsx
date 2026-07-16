@@ -288,8 +288,8 @@ function NuevaPropiedadDialog() {
                 <p className="text-xs text-muted-foreground">(Ya existe en el catálogo)</p>
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="nc-link">Nombre comercial</Label>
-                <Input id="nc-link" placeholder={existente.nombre_legal || "(igual que nombre legal si vacío)"} value={nombreComercial} onChange={(e) => setNombreComercial(e.target.value)} />
+                <Label htmlFor="nl-link">Nombre legal</Label>
+                <Input id="nl-link" value={existente.nombre_legal} disabled />
               </div>
               <Button onClick={vincular} disabled={submitting}>Vincular</Button>
             </div>
@@ -299,10 +299,6 @@ function NuevaPropiedadDialog() {
               <div className="space-y-1.5">
                 <Label htmlFor="nl">Nombre legal *</Label>
                 <Input id="nl" value={nombreLegal} onChange={(e) => setNombreLegal(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="nc">Nombre comercial</Label>
-                <Input id="nc" placeholder={nombreLegal || "(igual que nombre legal si vacío)"} value={nombreComercial} onChange={(e) => setNombreComercial(e.target.value)} />
               </div>
               <Collapsible>
                 <CollapsibleTrigger asChild>
