@@ -95,7 +95,6 @@ function PropiedadDetail() {
         .from("propiedad")
         .update({
           nombre_legal: form.nombre_legal,
-          nombre_comercial: form.nombre_comercial,
           nif: form.nif,
           tipo_via: form.tipo_via || null,
           nombre_via: form.nombre_via || null,
@@ -107,6 +106,12 @@ function PropiedadDetail() {
         })
         .eq("id", id);
       if (error) throw error;
+      const { error: linkErr } = await supabase
+        .from("clientes_propiedades")
+        .update({ nombre_comercial: form.nombre_comercial || null })
+        .eq("cliente_id", clienteId!)
+        .eq("propiedad_id", id);
+      if (linkErr) throw linkErr;
     },
     onSuccess: () => {
       toast.success("Cambios guardados");
