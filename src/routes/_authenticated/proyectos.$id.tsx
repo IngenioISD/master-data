@@ -238,8 +238,7 @@ function ProyectoDetail() {
 }
 
 function PropiedadPicker({ value, onChange }: { value: string | null; onChange: (v: string) => void }) {
-  const { claims } = useAuth();
-  const clienteId = claims.cliente_id as string | undefined;
+  const { clienteId } = useClienteId();
 
   const { data: selectedInfo } = useQuery({
     queryKey: ["propiedad-picker-selected", clienteId, value],
