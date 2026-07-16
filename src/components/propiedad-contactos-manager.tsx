@@ -452,16 +452,19 @@ function AddContactoDialog({
                       <span className="text-xs text-muted-foreground">
                         {c.departamento ?? "—"} · {c.email ?? "sin email"}
                       </span>
+                      {already && <span className="text-[10px] font-bold text-lima uppercase mt-0.5">Agregado</span>}
                     </div>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      disabled={already || link.isPending}
-                      onClick={() => link.mutate(c.id)}
-                    >
-                      <Link2 className="mr-2 h-4 w-4" />
-                      {already ? "Ya vinculado" : "Vincular"}
-                    </Button>
+                    {!already && (
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        disabled={link.isPending}
+                        onClick={() => link.mutate(c.id)}
+                      >
+                        <Link2 className="mr-2 h-4 w-4" />
+                        Agregar
+                      </Button>
+                    )}
                   </div>
                 );
               })}
