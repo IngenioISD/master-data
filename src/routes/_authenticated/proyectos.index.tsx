@@ -19,7 +19,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { BuscarOCrearCombobox } from "@/components/buscar-o-crear-combobox";
 
-export const Route = createFileRoute("/_authenticated/proyectos")({
+export const Route = createFileRoute("/_authenticated/proyectos/")({
   head: () => ({ meta: [{ title: "Proyectos · Datos Maestros" }] }),
   component: ProyectosList,
 });
