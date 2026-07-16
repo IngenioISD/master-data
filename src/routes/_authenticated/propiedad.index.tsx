@@ -60,11 +60,11 @@ function PropiedadList() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clientes_propiedades")
-        .select("activo, propiedad:propiedad_id(id, nombre_comercial, nif, nombre_legal, municipio, provincia, pais)")
+        .select("activo, nombre_comercial, propiedad:propiedad_id(id, nif, nombre_legal, municipio, provincia, pais)")
         .eq("cliente_id", clienteId!);
       if (error) throw error;
       const rows = (data ?? [])
-        .map((r: any) => ({ ...r.propiedad, activo: r.activo }))
+        .map((r: any) => ({ ...r.propiedad, activo: r.activo, nombre_comercial: r.nombre_comercial }))
         .filter((p: any) => p && p.id)
         .filter((p: any) => (estado === "activas" ? !!p.activo : !p.activo));
       if (!q) return rows;
