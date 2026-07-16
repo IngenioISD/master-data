@@ -247,14 +247,17 @@ function PropiedadDetail() {
       <Card>
         <CardHeader><CardTitle>Contactos</CardTitle></CardHeader>
         <CardContent>
-          <ContactosManager
-            table="propiedad_contactos"
-            fkColumn="propiedad_id"
-            fkValue={id}
-            canCreate={permisos.puede_crear}
-            canEdit={permisos.puede_editar}
-            canDelete={permisos.puede_eliminar}
-          />
+          {clienteId ? (
+            <PropiedadContactosManager
+              propiedadId={id}
+              clienteId={clienteId}
+              canCreate={permisos.puede_crear}
+              canEdit={permisos.puede_editar}
+              canDelete={permisos.puede_eliminar}
+            />
+          ) : (
+            <p className="text-sm text-muted-foreground">Cargando…</p>
+          )}
         </CardContent>
       </Card>
     </div>
