@@ -57,7 +57,9 @@ function PropiedadDetail() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clientes_propiedades")
-        .select("nombre_comercial, propiedad:propiedad_id(id, nombre_legal, nif, tipo_via, nombre_via, numero, codigo_postal, municipio, provincia, pais)")
+        .select(
+          "nombre_comercial, propiedad:propiedad_id(id, nombre_legal, nif, tipo_via, nombre_via, numero, codigo_postal, municipio, provincia, pais)",
+        )
         .eq("cliente_id", clienteId!)
         .eq("propiedad_id", id)
         .maybeSingle();
@@ -157,7 +159,9 @@ function PropiedadDetail() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <Button asChild variant="ghost" size="sm">
-            <Link to="/propiedad"><ArrowLeft className="mr-2 h-4 w-4" /> Volver</Link>
+            <Link to="/propiedad">
+              <ArrowLeft className="mr-2 h-4 w-4" /> Volver
+            </Link>
           </Button>
           <h1 className="text-xl font-bold">{form.nombre_comercial || form.nombre_legal}</h1>
         </div>
@@ -180,7 +184,14 @@ function PropiedadDetail() {
           )}
           {editing && (
             <div className="flex gap-2">
-              <Button variant="ghost" size="sm" onClick={() => { resetForm(); setEditMode(false); }}>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  resetForm();
+                  setEditMode(false);
+                }}
+              >
                 <X className="mr-2 h-4 w-4" /> Cancelar
               </Button>
               <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
@@ -194,12 +205,12 @@ function PropiedadDetail() {
             <>
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="space-y-1.5">
-                  <Label>NIF</Label>
-                  <Input value={form.nif} onChange={(e) => set("nif", e.target.value)} />
+                  <Label className="text-muted-foreground">NIF</Label>
+                  <p className="text-sm">{form.nif || <span className="text-muted-foreground">—</span>}</p>
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
-                  <Label>Nombre legal</Label>
-                  <Input value={form.nombre_legal} onChange={(e) => set("nombre_legal", e.target.value)} />
+                  <Label className="text-muted-foreground">Nombre legal</Label>
+                  <p className="text-sm">{form.nombre_legal || <span className="text-muted-foreground">—</span>}</p>
                 </div>
                 <div className="space-y-1.5 sm:col-span-3">
                   <Label>Nombre comercial</Label>
@@ -209,7 +220,11 @@ function PropiedadDetail() {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-6 pt-2">
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label>Tipo de vía</Label>
-                  <Input value={form.tipo_via} onChange={(e) => set("tipo_via", e.target.value)} placeholder="Calle, Avenida…" />
+                  <Input
+                    value={form.tipo_via}
+                    onChange={(e) => set("tipo_via", e.target.value)}
+                    placeholder="Calle, Avenida…"
+                  />
                 </div>
                 <div className="space-y-1.5 sm:col-span-3">
                   <Label>Nombre de la vía</Label>
@@ -258,9 +273,10 @@ function PropiedadDetail() {
         </CardContent>
       </Card>
 
-
       <Card>
-        <CardHeader><CardTitle>Contactos</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle>Contactos</CardTitle>
+        </CardHeader>
         <CardContent>
           {clienteId ? (
             <PropiedadContactosManager
