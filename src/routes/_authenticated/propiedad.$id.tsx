@@ -160,9 +160,16 @@ function PropiedadDetail() {
         <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle>Datos generales</CardTitle>
           {canEdit && !editing && (
-            <Button size="icon" variant="ghost" onClick={() => setEditMode(true)} aria-label="Editar">
-              <Pencil className="h-4 w-4" />
-            </Button>
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost" onClick={() => setEditMode(true)} aria-label="Editar">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Editar</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           {editing && (
             <div className="flex gap-2">
