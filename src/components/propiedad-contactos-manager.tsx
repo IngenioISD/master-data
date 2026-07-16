@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus, Trash2, Pencil, X, Save, Link2, Search } from "lucide-react";
+import { Plus, Unlink, Pencil, X, Save, Link2, Search } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -219,7 +219,7 @@ export function PropiedadContactosManager({
                         variant="ghost"
                         onClick={() => unlink.mutate(c.id)}
                       >
-                        <Trash2 className="h-4 w-4" />
+                        <Unlink className="h-4 w-4" />
                       </Button>
                     )}
                   </TableCell>
