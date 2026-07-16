@@ -24,7 +24,7 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
 import { Badge } from "@/components/ui/badge";
 
-export const Route = createFileRoute("/_authenticated/proveedores")({
+export const Route = createFileRoute("/_authenticated/proveedores/")({
   head: () => ({ meta: [{ title: "Proveedores · Datos Maestros" }] }),
   component: ProveedoresList,
 });
