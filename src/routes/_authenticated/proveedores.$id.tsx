@@ -50,7 +50,7 @@ function ProveedorDetail() {
         nombre_legal: data.nombre_legal ?? "",
         nif: data.nif ?? "",
         tipo_proveedor: data.tipo_proveedor ?? "Material",
-        via: data.via ?? "",
+        via: data.nombre_via ?? "",
         numero: data.numero ?? "",
         cp: data.codigo_postal ?? "",
         municipio: data.municipio ?? "",
@@ -64,7 +64,7 @@ function ProveedorDetail() {
     mutationFn: async () => {
       const { error } = await supabase.from("proveedor_subcontrata").update({
         nombre_legal: form.nombre_legal, nif: form.nif, tipo_proveedor: form.tipo_proveedor,
-        via: form.via, numero: form.numero, codigo_postal: form.cp,
+        nombre_via: form.via, numero: form.numero, codigo_postal: form.cp,
         municipio: form.municipio, provincia: form.provincia, pais: form.pais,
       }).eq("id", id);
       if (error) throw error;
