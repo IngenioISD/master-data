@@ -24,13 +24,21 @@ export const Route = createFileRoute("/_authenticated/proyectos/")({
   component: ProyectosList,
 });
 
-const ESTADOS = ["En estudio", "Adjudicado", "Perdido", "Finalizado"] as const;
+const ESTADOS = [
+  { value: "en_estudio", label: "En estudio" },
+  { value: "adjudicado", label: "Adjudicado" },
+  { value: "perdido", label: "Perdido" },
+  { value: "finalizado", label: "Finalizado" },
+] as const;
+
+const estadoLabel = (v: string | null | undefined) =>
+  ESTADOS.find((e) => e.value === v)?.label ?? v ?? "";
 
 const estadoColor: Record<string, string> = {
-  "En estudio": "bg-secondary text-secondary-foreground",
-  "Adjudicado": "bg-accent text-accent-foreground",
-  "Perdido": "bg-destructive/15 text-destructive",
-  "Finalizado": "bg-primary/10 text-primary",
+  en_estudio: "bg-secondary text-secondary-foreground",
+  adjudicado: "bg-accent text-accent-foreground",
+  perdido: "bg-destructive/15 text-destructive",
+  finalizado: "bg-primary/10 text-primary",
 };
 
 interface Row {
@@ -82,7 +90,7 @@ function ProyectosList() {
         <div className="flex flex-wrap gap-1">
           <Button size="sm" variant={estado === "__all" ? "default" : "outline"} onClick={() => setEstado("__all")}>Todos</Button>
           {ESTADOS.map((e) => (
-            <Button key={e} size="sm" variant={estado === e ? "default" : "outline"} onClick={() => setEstado(e)}>{e}</Button>
+            <Button key={e.value} size="sm" variant={estado === e.value ? "default" : "outline"} onClick={() => setEstado(e.value)}>{e.label}</Button>
           ))}
         </div>
       </div>
@@ -105,7 +113,7 @@ function ProyectosList() {
                 <TableCell className="font-medium">{p.nombre}</TableCell>
                 <TableCell>{p.codigo_obra ?? "—"}</TableCell>
                 <TableCell>{p.tipo_obra ?? "—"}</TableCell>
-                <TableCell>{p.estado && <Badge className={estadoColor[p.estado]}>{p.estado}</Badge>}</TableCell>
+                <TableCell>{p.estado && <Badge className={estadoColor[p.estado]}>{estadoLabel(p.estado)}</Badge>}</TableCell>
                 <TableCell className="text-right">
                   <Button asChild variant="ghost" size="sm">
                     <Link to="/proyectos/$id" params={{ id: p.id }}>Abrir</Link>
@@ -149,7 +157,7 @@ function NuevoProyectoDialog() {
       }
       const { error } = await supabase.from("proyectos").insert({
         nombre, cliente_id: clienteId, propiedad_id: propiedadId,
-        tipo_obra: tipoObra, estado: "En estudio",
+        tipo_obra: tipoObra, estado: "en_estudio",
       });
       if (error) throw error;
     },
