@@ -68,7 +68,7 @@ function ProyectoDetail() {
         .eq("categoria", "tipo_obra")
         .order("etiqueta");
       if (error) throw error;
-      return (data ?? []) as { id: string; valor: string; etiqueta: string | null }[];
+      return (data ?? []) as { id: string; codigo: string; etiqueta: string | null }[];
     },
   });
 
