@@ -194,35 +194,50 @@ export function PropiedadContactosManager({
                   <TableCell>{c.telefono}</TableCell>
                   <TableCell>{c.email}</TableCell>
                   <TableCell className="text-right">
-                    {canEdit && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() =>
-                          setEditing({
-                            id: c.id,
-                            nombre: c.nombre,
-                            apellido_1: c.apellido_1 ?? "",
-                            apellido_2: c.apellido_2 ?? "",
-                            departamento: c.departamento ?? "Administración",
-                            telefono: c.telefono ?? "",
-                            email: c.email ?? "",
-                          })
-                        }
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                    )}
-                    {canDelete && (
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => unlink.mutate(c.id)}
-                      >
-                        <Unlink className="h-4 w-4" />
-                      </Button>
-                    )}
+                    <TooltipProvider delayDuration={200}>
+                      {canEdit && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              aria-label="Editar"
+                              onClick={() =>
+                                setEditing({
+                                  id: c.id,
+                                  nombre: c.nombre,
+                                  apellido_1: c.apellido_1 ?? "",
+                                  apellido_2: c.apellido_2 ?? "",
+                                  departamento: c.departamento ?? "Administración",
+                                  telefono: c.telefono ?? "",
+                                  email: c.email ?? "",
+                                })
+                              }
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Editar</TooltipContent>
+                        </Tooltip>
+                      )}
+                      {canDelete && (
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              aria-label="Desvincular"
+                              onClick={() => unlink.mutate(c.id)}
+                            >
+                              <Unlink className="h-4 w-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>Desvincular</TooltipContent>
+                        </Tooltip>
+                      )}
+                    </TooltipProvider>
                   </TableCell>
+
                 </TableRow>
               ),
             )}
