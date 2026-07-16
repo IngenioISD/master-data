@@ -60,11 +60,11 @@ function PropiedadList() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("clientes_propiedades")
-        .select("activo, propiedad:propiedad_id(id, nombre_comercial, nif, nombre_legal, municipio, provincia, pais)")
+        .select("activo, nombre_comercial, propiedad:propiedad_id(id, nif, nombre_legal, municipio, provincia, pais)")
         .eq("cliente_id", clienteId!);
       if (error) throw error;
       const rows = (data ?? [])
-        .map((r: any) => ({ ...r.propiedad, activo: r.activo }))
+        .map((r: any) => ({ ...r.propiedad, activo: r.activo, nombre_comercial: r.nombre_comercial }))
         .filter((p: any) => p && p.id)
         .filter((p: any) => (estado === "activas" ? !!p.activo : !p.activo));
       if (!q) return rows;
@@ -176,7 +176,7 @@ function NuevaPropiedadDialog() {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [nif, setNif] = useState("");
-  const [existente, setExistente] = useState<{ id: string; nombre_legal: string; nombre_comercial: string | null } | null>(null);
+  const [existente, setExistente] = useState<{ id: string; nombre_legal: string } | null>(null);
   const [checked, setChecked] = useState(false);
   const [nombreLegal, setNombreLegal] = useState("");
   const [nombreComercial, setNombreComercial] = useState("");
@@ -189,7 +189,7 @@ function NuevaPropiedadDialog() {
     if (!nif.trim()) return;
     const { data, error } = await supabase
       .from("propiedad")
-      .select("id, nombre_legal, nombre_comercial")
+      .select("id, nombre_legal")
       .eq("nif", nif.trim())
       .maybeSingle();
     if (error) {
@@ -207,6 +207,7 @@ function NuevaPropiedadDialog() {
       cliente_id: clienteId,
       propiedad_id: existente.id,
       activo: true,
+      nombre_comercial: (nombreComercial || existente.nombre_legal).trim(),
     });
     setSubmitting(false);
     if (error) {
@@ -226,7 +227,6 @@ function NuevaPropiedadDialog() {
       .insert({
         nif: nif.trim(),
         nombre_legal: nombreLegal.trim(),
-        nombre_comercial: (nombreComercial || nombreLegal).trim(),
       })
       .select("id")
       .single();
@@ -239,6 +239,7 @@ function NuevaPropiedadDialog() {
       cliente_id: clienteId,
       propiedad_id: nueva.id,
       activo: true,
+      nombre_comercial: (nombreComercial || nombreLegal).trim(),
     });
     setSubmitting(false);
     if (linkErr) {
@@ -281,10 +282,16 @@ function NuevaPropiedadDialog() {
             </div>
           </div>
           {checked && existente && (
-            <div className="rounded-md border bg-muted/40 p-3 text-sm">
-              <p className="font-medium">{existente.nombre_comercial || existente.nombre_legal}</p>
-              <p className="text-xs text-muted-foreground">Ya existe en el catálogo. Vinculala a tu cliente sin duplicar.</p>
-              <Button className="mt-3" onClick={vincular} disabled={submitting}>Vincular a mi cliente</Button>
+            <div className="space-y-3 rounded-md border bg-muted/40 p-3 text-sm">
+              <div>
+                <p className="font-medium">{existente.nombre_legal}</p>
+                <p className="text-xs text-muted-foreground">Ya existe en el catálogo. Vinculala a tu cliente sin duplicar.</p>
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="nc-link">Nombre comercial</Label>
+                <Input id="nc-link" placeholder={existente.nombre_legal || "(igual que nombre legal si vacío)"} value={nombreComercial} onChange={(e) => setNombreComercial(e.target.value)} />
+              </div>
+              <Button onClick={vincular} disabled={submitting}>Vincular a mi cliente</Button>
             </div>
           )}
           {checked && !existente && (
