@@ -252,8 +252,10 @@ function PropiedadDetail() {
                   <Label>País</Label>
                   <Input value={form.pais} onChange={(e) => set("pais", e.target.value)} />
                 </div>
+                </div>
               </div>
             </>
+
           ) : (
             <>
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
