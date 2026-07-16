@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedProyectosRouteImport } from './routes/_authenticated/proyectos'
 import { Route as AuthenticatedProveedoresRouteImport } from './routes/_authenticated/proveedores'
 import { Route as AuthenticatedPropiedadRouteImport } from './routes/_authenticated/propiedad'
 import { Route as AuthenticatedProyectosIndexRouteImport } from './routes/_authenticated/proyectos.index'
@@ -34,6 +35,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedProyectosRoute = AuthenticatedProyectosRouteImport.update({
+  id: '/proyectos',
+  path: '/proyectos',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedProveedoresRoute =
   AuthenticatedProveedoresRouteImport.update({
     id: '/proveedores',
@@ -47,9 +53,9 @@ const AuthenticatedPropiedadRoute = AuthenticatedPropiedadRouteImport.update({
 } as any)
 const AuthenticatedProyectosIndexRoute =
   AuthenticatedProyectosIndexRouteImport.update({
-    id: '/proyectos/',
-    path: '/proyectos/',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedProyectosRoute,
   } as any)
 const AuthenticatedPropiedadIndexRoute =
   AuthenticatedPropiedadIndexRouteImport.update({
@@ -59,9 +65,9 @@ const AuthenticatedPropiedadIndexRoute =
   } as any)
 const AuthenticatedProyectosIdRoute =
   AuthenticatedProyectosIdRouteImport.update({
-    id: '/proyectos/$id',
-    path: '/proyectos/$id',
-    getParentRoute: () => AuthenticatedRouteRoute,
+    id: '/$id',
+    path: '/$id',
+    getParentRoute: () => AuthenticatedProyectosRoute,
   } as any)
 const AuthenticatedProveedoresIdRoute =
   AuthenticatedProveedoresIdRouteImport.update({
@@ -81,6 +87,7 @@ export interface FileRoutesByFullPath {
   '/auth': typeof AuthRoute
   '/propiedad': typeof AuthenticatedPropiedadRouteWithChildren
   '/proveedores': typeof AuthenticatedProveedoresRouteWithChildren
+  '/proyectos': typeof AuthenticatedProyectosRouteWithChildren
   '/propiedad/$id': typeof AuthenticatedPropiedadIdRoute
   '/proveedores/$id': typeof AuthenticatedProveedoresIdRoute
   '/proyectos/$id': typeof AuthenticatedProyectosIdRoute
@@ -104,6 +111,7 @@ export interface FileRoutesById {
   '/auth': typeof AuthRoute
   '/_authenticated/propiedad': typeof AuthenticatedPropiedadRouteWithChildren
   '/_authenticated/proveedores': typeof AuthenticatedProveedoresRouteWithChildren
+  '/_authenticated/proyectos': typeof AuthenticatedProyectosRouteWithChildren
   '/_authenticated/propiedad/$id': typeof AuthenticatedPropiedadIdRoute
   '/_authenticated/proveedores/$id': typeof AuthenticatedProveedoresIdRoute
   '/_authenticated/proyectos/$id': typeof AuthenticatedProyectosIdRoute
@@ -117,6 +125,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/propiedad'
     | '/proveedores'
+    | '/proyectos'
     | '/propiedad/$id'
     | '/proveedores/$id'
     | '/proyectos/$id'
@@ -139,6 +148,7 @@ export interface FileRouteTypes {
     | '/auth'
     | '/_authenticated/propiedad'
     | '/_authenticated/proveedores'
+    | '/_authenticated/proyectos'
     | '/_authenticated/propiedad/$id'
     | '/_authenticated/proveedores/$id'
     | '/_authenticated/proyectos/$id'
@@ -175,6 +185,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/proyectos': {
+      id: '/_authenticated/proyectos'
+      path: '/proyectos'
+      fullPath: '/proyectos'
+      preLoaderRoute: typeof AuthenticatedProyectosRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/proveedores': {
       id: '/_authenticated/proveedores'
       path: '/proveedores'
@@ -191,10 +208,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/proyectos/': {
       id: '/_authenticated/proyectos/'
-      path: '/proyectos'
+      path: '/'
       fullPath: '/proyectos/'
       preLoaderRoute: typeof AuthenticatedProyectosIndexRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedProyectosRoute
     }
     '/_authenticated/propiedad/': {
       id: '/_authenticated/propiedad/'
@@ -205,10 +222,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/proyectos/$id': {
       id: '/_authenticated/proyectos/$id'
-      path: '/proyectos/$id'
+      path: '/$id'
       fullPath: '/proyectos/$id'
       preLoaderRoute: typeof AuthenticatedProyectosIdRouteImport
-      parentRoute: typeof AuthenticatedRouteRoute
+      parentRoute: typeof AuthenticatedProyectosRoute
     }
     '/_authenticated/proveedores/$id': {
       id: '/_authenticated/proveedores/$id'
@@ -257,18 +274,32 @@ const AuthenticatedProveedoresRouteWithChildren =
     AuthenticatedProveedoresRouteChildren,
   )
 
+interface AuthenticatedProyectosRouteChildren {
+  AuthenticatedProyectosIdRoute: typeof AuthenticatedProyectosIdRoute
+  AuthenticatedProyectosIndexRoute: typeof AuthenticatedProyectosIndexRoute
+}
+
+const AuthenticatedProyectosRouteChildren: AuthenticatedProyectosRouteChildren =
+  {
+    AuthenticatedProyectosIdRoute: AuthenticatedProyectosIdRoute,
+    AuthenticatedProyectosIndexRoute: AuthenticatedProyectosIndexRoute,
+  }
+
+const AuthenticatedProyectosRouteWithChildren =
+  AuthenticatedProyectosRoute._addFileChildren(
+    AuthenticatedProyectosRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedPropiedadRoute: typeof AuthenticatedPropiedadRouteWithChildren
   AuthenticatedProveedoresRoute: typeof AuthenticatedProveedoresRouteWithChildren
-  AuthenticatedProyectosIdRoute: typeof AuthenticatedProyectosIdRoute
-  AuthenticatedProyectosIndexRoute: typeof AuthenticatedProyectosIndexRoute
+  AuthenticatedProyectosRoute: typeof AuthenticatedProyectosRouteWithChildren
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPropiedadRoute: AuthenticatedPropiedadRouteWithChildren,
   AuthenticatedProveedoresRoute: AuthenticatedProveedoresRouteWithChildren,
-  AuthenticatedProyectosIdRoute: AuthenticatedProyectosIdRoute,
-  AuthenticatedProyectosIndexRoute: AuthenticatedProyectosIndexRoute,
+  AuthenticatedProyectosRoute: AuthenticatedProyectosRouteWithChildren,
 }
 
 const AuthenticatedRouteRouteWithChildren =
