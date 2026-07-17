@@ -427,9 +427,10 @@ function AdjudicarDialog({
         codigo_obra: codigo,
         fecha_adjudicacion: fecha,
         plazo_ejecucion_meses: Number(meses),
-        via: dir.via,
+        nombre_via: dir.via,
         numero: dir.numero,
-        cp: dir.cp,
+        codigo_postal: dir.cp,
+
         municipio: dir.municipio,
         provincia: dir.provincia,
         pais: dir.pais,
@@ -468,7 +469,7 @@ function AdjudicarDialog({
         </div>
         <div className="space-y-2 border-t pt-3">
           <Label className="text-sm font-medium">Dirección de la obra *</Label>
-          <DireccionFiscalFields value={dir} onChange={setDir} required />
+          <DireccionFiscalFields value={dir} onChange={setDir} requiredKeys={["municipio", "provincia"]} />
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
