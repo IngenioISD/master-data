@@ -288,12 +288,14 @@ function ProyectoDetail() {
         open={adjudicarOpen}
         onOpenChange={setAdjudicarOpen}
         proyectoId={id}
+        initial={data}
         onDone={() => {
           setAdjudicarOpen(false);
           qc.invalidateQueries({ queryKey: ["proyecto", id] });
           qc.invalidateQueries({ queryKey: ["proyectos"] });
         }}
       />
+
     </div>
   );
 }
