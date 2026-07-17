@@ -468,7 +468,7 @@ function AdjudicarDialog({
         </div>
         <div className="space-y-2 border-t pt-3">
           <Label className="text-sm font-medium">Dirección de la obra *</Label>
-          <DireccionFiscalFields value={dir} onChange={setDir} required />
+          <DireccionFiscalFields value={dir} onChange={setDir} requiredKeys={["municipio", "provincia"]} />
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
