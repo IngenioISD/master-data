@@ -382,11 +382,13 @@ function AdjudicarDialog({
   open,
   onOpenChange,
   proyectoId,
+  initial,
   onDone,
 }: {
   open: boolean;
   onOpenChange: (o: boolean) => void;
   proyectoId: string;
+  initial?: Record<string, unknown> | null;
   onDone: () => void;
 }) {
   const [codigo, setCodigo] = useState("");
@@ -395,8 +397,25 @@ function AdjudicarDialog({
   const [dir, setDir] = useState<DireccionFiscal>({ pais: "España" });
   const [submitting, setSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (!open) return;
+    const d = (initial ?? {}) as Record<string, unknown>;
+    const str = (v: unknown) => (v == null ? "" : String(v));
+    setCodigo(str(d.codigo_obra));
+    setFecha(str(d.fecha_adjudicacion));
+    setMeses(d.plazo_ejecucion_meses == null ? "" : String(d.plazo_ejecucion_meses));
+    setDir({
+      via: (d.nombre_via as string | null) ?? (d.via as string | null) ?? "",
+      numero: (d.numero as string | null) ?? "",
+      cp: (d.codigo_postal as string | null) ?? (d.cp as string | null) ?? "",
+      municipio: (d.municipio as string | null) ?? "",
+      provincia: (d.provincia as string | null) ?? "",
+      pais: (d.pais as string | null) ?? "España",
+    });
+  }, [open, initial]);
+
   async function confirmar() {
-    if (!codigo || !fecha || !meses || !dir.via || !dir.numero || !dir.cp || !dir.municipio || !dir.provincia) {
+    if (!codigo || !fecha || !meses || !dir.municipio || !dir.provincia) {
       toast.error("Faltan campos obligatorios para adjudicar.");
       return;
     }
@@ -424,6 +443,7 @@ function AdjudicarDialog({
     toast.success("Proyecto adjudicado");
     onDone();
   }
+
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
