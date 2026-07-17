@@ -173,7 +173,14 @@ function ProyectoDetail() {
                 </div>
                 <div className="space-y-1.5">
                   <Label>Fecha adjudicación</Label>
-                  <Input value={data.fecha_adjudicacion ?? ""} readOnly />
+                  <Input
+                    value={
+                      data.fecha_adjudicacion
+                        ? new Date(data.fecha_adjudicacion).toLocaleDateString("es-ES").replaceAll("/", "-")
+                        : ""
+                    }
+                    readOnly
+                  />
                 </div>
                 <div className="space-y-1.5">
                   <Label>Duración prevista (meses)</Label>
