@@ -60,6 +60,14 @@ function ProyectoDetail() {
   const [tipoObra, setTipoObra] = useState("");
   const [propiedadId, setPropiedadId] = useState<string | null>(null);
   const [adjudicarOpen, setAdjudicarOpen] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+
+  const resetForm = () => {
+    if (!data) return;
+    setNombre(data.nombre ?? "");
+    setTipoObra(data.tipo_obra ?? "");
+    setPropiedadId(data.propiedad_id ?? null);
+  };
 
   useEffect(() => {
     if (data) {
