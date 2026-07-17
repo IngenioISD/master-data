@@ -183,7 +183,7 @@ function ProyectoDetail() {
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Duración prevista (meses)</Label>
+                  <Label>Duración (meses)</Label>
                   <Input value={data.plazo_ejecucion_meses ?? ""} readOnly />
                 </div>
               </>
