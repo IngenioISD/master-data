@@ -127,6 +127,18 @@ function ProyectoDetail() {
   if (isLoading) return <div className="text-sm text-muted-foreground">Cargando…</div>;
   if (!data) return <div className="text-sm text-muted-foreground">No encontrado.</div>;
 
+  const canEdit = permisos.puede_editar;
+  const editing = canEdit && editMode;
+
+  const tipoObraLabel = tipos.find((t) => t.codigo === tipoObra)?.etiqueta || tipoObra;
+
+  const Field = ({ label, value, colSpan = "" }: { label: string; value: string; colSpan?: string }) => (
+    <div className={`space-y-1 ${colSpan}`}>
+      <Label className="text-muted-foreground">{label}</Label>
+      <p className="text-sm">{value || <span className="text-muted-foreground">—</span>}</p>
+    </div>
+  );
+
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div className="flex items-center justify-between">
@@ -139,90 +151,121 @@ function ProyectoDetail() {
           <h1 className="text-xl font-bold">{nombre}</h1>
           {data.estado && <Badge variant="outline">{estadoLabel(data.estado)}</Badge>}
         </div>
-        {permisos.puede_editar && (
-          <Button onClick={() => save.mutate()} disabled={save.isPending}>
-            <Save className="mr-2 h-4 w-4" /> Guardar
-          </Button>
-        )}
       </div>
 
       <Card>
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0">
           <CardTitle>Datos generales del proyecto</CardTitle>
+          {canEdit && !editing && (
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button size="icon" variant="ghost" onClick={() => setEditMode(true)} aria-label="Editar">
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>Editar</TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          {editing && (
+            <div className="flex gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  resetForm();
+                  setEditMode(false);
+                }}
+              >
+                <X className="mr-2 h-4 w-4" /> Cancelar
+              </Button>
+              <Button size="sm" onClick={() => save.mutate()} disabled={save.isPending}>
+                <Save className="mr-2 h-4 w-4" /> Guardar
+              </Button>
+            </div>
+          )}
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            <div className="space-y-1.5">
-              <Label>Nombre</Label>
-              <Input value={nombre} onChange={(e) => setNombre(e.target.value)} />
+          {editing ? (
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="space-y-1.5">
+                <Label>Nombre</Label>
+                <Input value={nombre} onChange={(e) => setNombre(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Tipo de obra</Label>
+                <Select value={tipoObra} onValueChange={setTipoObra}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {tipos.map((t) => (
+                      <SelectItem key={t.id} value={t.codigo}>
+                        {t.etiqueta || t.codigo}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-1.5 sm:col-span-2">
+                <Label>Propiedad</Label>
+                <PropiedadPicker value={propiedadId} onChange={setPropiedadId} />
+              </div>
             </div>
-            <div className="space-y-1.5">
-              <Label>Tipo de obra</Label>
-              <Select value={tipoObra} onValueChange={setTipoObra}>
-                <SelectTrigger>
+          ) : (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <Field label="Nombre" value={nombre} />
+              <Field label="Tipo de obra" value={tipoObraLabel} />
+              <div className="space-y-1 sm:col-span-2">
+                <Label className="text-muted-foreground">Propiedad</Label>
+                <PropiedadReadOnly propiedadId={propiedadId} />
+              </div>
+            </div>
+          )}
+
+          {data.estado === "adjudicado" && (
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 border-t pt-4">
+              <Field label="Código" value={data.codigo_obra ?? ""} />
+              <Field
+                label="Fecha adjudicación"
+                value={
+                  data.fecha_adjudicacion
+                    ? new Date(data.fecha_adjudicacion).toLocaleDateString("es-ES").replaceAll("/", "-")
+                    : ""
+                }
+              />
+              <Field label="Duración (meses)" value={String(data.plazo_ejecucion_meses ?? "")} />
+            </div>
+          )}
+
+          <div className="flex items-center gap-3 border-t pt-4">
+            <Label className="m-0">Estado:</Label>
+            {editing ? (
+              <Select
+                value={data.estado ?? "en_estudio"}
+                onValueChange={(v) => {
+                  if (v === "adjudicado" && data.estado !== "adjudicado") {
+                    setAdjudicarOpen(true);
+                  } else {
+                    cambiarEstado.mutate(v);
+                  }
+                }}
+              >
+                <SelectTrigger className="w-56">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {tipos.map((t) => (
-                    <SelectItem key={t.id} value={t.codigo}>
-                      {t.etiqueta || t.codigo}
+                  {ESTADOS.map((e) => (
+                    <SelectItem key={e.value} value={e.value}>
+                      {e.label}
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-            </div>
-            <div className="space-y-1.5 sm:col-span-2">
-              <Label>Propiedad</Label>
-              <PropiedadPicker value={propiedadId} onChange={setPropiedadId} />
-            </div>
-            {data.estado === "adjudicado" && (
-              <>
-                <div className="space-y-1.5">
-                  <Label>Código</Label>
-                  <Input value={data.codigo_obra ?? ""} readOnly />
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Fecha adjudicación</Label>
-                  <Input
-                    value={
-                      data.fecha_adjudicacion
-                        ? new Date(data.fecha_adjudicacion).toLocaleDateString("es-ES").replaceAll("/", "-")
-                        : ""
-                    }
-                    readOnly
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label>Duración (meses)</Label>
-                  <Input value={data.plazo_ejecucion_meses ?? ""} readOnly />
-                </div>
-              </>
+            ) : (
+              <Badge variant="outline">{estadoLabel(data.estado)}</Badge>
             )}
-          </div>
-          <div className="flex items-center gap-3 border-t pt-4">
-            <Label className="m-0">Estado:</Label>
-            <Select
-              value={data.estado ?? "en_estudio"}
-              disabled={!permisos.puede_editar}
-              onValueChange={(v) => {
-                if (v === "adjudicado" && data.estado !== "adjudicado") {
-                  setAdjudicarOpen(true);
-                } else {
-                  cambiarEstado.mutate(v);
-                }
-              }}
-            >
-              <SelectTrigger className="w-56">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {ESTADOS.map((e) => (
-                  <SelectItem key={e.value} value={e.value}>
-                    {e.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
           </div>
         </CardContent>
       </Card>
