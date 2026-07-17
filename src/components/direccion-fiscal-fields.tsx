@@ -34,7 +34,7 @@ export function DireccionFiscalFields({ value, onChange, required = false, requi
         <Input id="numero" value={value.numero ?? ""} onChange={(e) => set("numero", e.target.value)} required={isReq("numero")} />
       </div>
       <div className="space-y-1.5 sm:col-span-2">
-        <Label htmlFor="cp">CP{mark("cp")}</Label>
+        <Label htmlFor="cp">Código Postal{mark("cp")}</Label>
         <Input id="cp" value={value.cp ?? ""} onChange={(e) => set("cp", e.target.value)} required={isReq("cp")} />
       </div>
       <div className="space-y-1.5 sm:col-span-2">

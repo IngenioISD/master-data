@@ -459,11 +459,11 @@ function AdjudicarDialog({
             <Input value={codigo} onChange={(e) => setCodigo(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label>Fecha adjudicación *</Label>
+            <Label>Fecha de adjudicación *</Label>
             <Input type="date" value={fecha} onChange={(e) => setFecha(e.target.value)} />
           </div>
           <div className="space-y-1.5">
-            <Label>Duración prevista (meses) *</Label>
+            <Label>Duración (meses) *</Label>
             <Input type="number" min="1" value={meses} onChange={(e) => setMeses(e.target.value)} />
           </div>
         </div>
@@ -476,7 +476,7 @@ function AdjudicarDialog({
             Cancelar
           </Button>
           <Button onClick={confirmar} disabled={submitting}>
-            Confirmar adjudicación
+            Confirmar
           </Button>
         </DialogFooter>
       </DialogContent>
