@@ -427,9 +427,10 @@ function AdjudicarDialog({
         codigo_obra: codigo,
         fecha_adjudicacion: fecha,
         plazo_ejecucion_meses: Number(meses),
-        via: dir.via,
+        nombre_via: dir.via,
         numero: dir.numero,
-        cp: dir.cp,
+        codigo_postal: dir.cp,
+
         municipio: dir.municipio,
         provincia: dir.provincia,
         pais: dir.pais,
