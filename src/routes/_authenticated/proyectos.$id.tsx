@@ -298,6 +298,31 @@ function ProyectoDetail() {
   );
 }
 
+function PropiedadReadOnly({ propiedadId }: { propiedadId: string | null }) {
+  const { clienteId } = useClienteId();
+  const { data } = useQuery({
+    queryKey: ["propiedad-readonly", clienteId, propiedadId],
+    enabled: !!propiedadId && !!clienteId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("propiedad")
+        .select("id, nombre_legal, clientes_propiedades!inner(cliente_id, nombre_comercial)")
+        .eq("id", propiedadId!)
+        .eq("clientes_propiedades.cliente_id", clienteId!)
+        .maybeSingle();
+      if (error) throw error;
+      if (!data) return null;
+      const cp = Array.isArray(data.clientes_propiedades) ? data.clientes_propiedades[0] : data.clientes_propiedades;
+      return { label: (cp?.nombre_comercial as string | null) || data.nombre_legal };
+    },
+  });
+  return (
+    <p className="text-sm">
+      {data?.label || <span className="text-muted-foreground">—</span>}
+    </p>
+  );
+}
+
 function PropiedadPicker({ value, onChange }: { value: string | null; onChange: (v: string) => void }) {
   const { clienteId } = useClienteId();
 
