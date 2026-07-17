@@ -15,9 +15,10 @@ interface Props {
   onChange: (v: DireccionFiscal) => void;
   required?: boolean;
   requiredKeys?: Array<keyof DireccionFiscal>;
+  hidePais?: boolean;
 }
 
-export function DireccionFiscalFields({ value, onChange, required = false, requiredKeys }: Props) {
+export function DireccionFiscalFields({ value, onChange, required = false, requiredKeys, hidePais = false }: Props) {
   const set = <K extends keyof DireccionFiscal>(k: K, v: string) =>
     onChange({ ...value, [k]: v });
   const isReq = (k: keyof DireccionFiscal) =>
@@ -45,10 +46,12 @@ export function DireccionFiscalFields({ value, onChange, required = false, requi
         <Label htmlFor="provincia">Provincia{mark("provincia")}</Label>
         <Input id="provincia" value={value.provincia ?? ""} onChange={(e) => set("provincia", e.target.value)} required={isReq("provincia")} />
       </div>
-      <div className="space-y-1.5 sm:col-span-6">
-        <Label htmlFor="pais">País{mark("pais")}</Label>
-        <Input id="pais" value={value.pais ?? "España"} onChange={(e) => set("pais", e.target.value)} required={isReq("pais")} />
-      </div>
+      {!hidePais && (
+        <div className="space-y-1.5 sm:col-span-6">
+          <Label htmlFor="pais">País{mark("pais")}</Label>
+          <Input id="pais" value={value.pais ?? "España"} onChange={(e) => set("pais", e.target.value)} required={isReq("pais")} />
+        </div>
+      )}
     </div>
   );
 }

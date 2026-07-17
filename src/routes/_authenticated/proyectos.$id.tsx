@@ -394,7 +394,7 @@ function AdjudicarDialog({
   const [codigo, setCodigo] = useState("");
   const [fecha, setFecha] = useState("");
   const [meses, setMeses] = useState<string>("");
-  const [dir, setDir] = useState<DireccionFiscal>({ pais: "España" });
+  const [dir, setDir] = useState<DireccionFiscal>({});
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
@@ -410,7 +410,6 @@ function AdjudicarDialog({
       cp: (d.codigo_postal as string | null) ?? (d.cp as string | null) ?? "",
       municipio: (d.municipio as string | null) ?? "",
       provincia: (d.provincia as string | null) ?? "",
-      pais: (d.pais as string | null) ?? "España",
     });
   }, [open, initial]);
 
@@ -433,7 +432,6 @@ function AdjudicarDialog({
 
         municipio: dir.municipio,
         provincia: dir.provincia,
-        pais: dir.pais,
       })
       .eq("id", proyectoId);
     setSubmitting(false);
@@ -469,7 +467,7 @@ function AdjudicarDialog({
         </div>
         <div className="space-y-2 border-t pt-3">
           <Label className="text-sm font-medium">Dirección de la obra *</Label>
-          <DireccionFiscalFields value={dir} onChange={setDir} requiredKeys={["municipio", "provincia"]} />
+          <DireccionFiscalFields value={dir} onChange={setDir} requiredKeys={["municipio", "provincia"]} hidePais />
         </div>
         <DialogFooter>
           <Button variant="ghost" onClick={() => onOpenChange(false)}>
