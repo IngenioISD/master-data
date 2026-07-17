@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 
 export interface Permisos {
@@ -7,35 +9,44 @@ export interface Permisos {
   puede_eliminar: boolean;
 }
 
-/**
- * Roles con CRUD completo sobre Datos Maestros.
- * El resto de roles son sólo lectura.
- */
-const CRUD_ROLES = new Set<string>([
-  "administracion",
-  "jefe_obra",
-  "jefe_produccion",
-]);
+const EMPTY: Permisos = {
+  puede_ver: false,
+  puede_crear: false,
+  puede_editar: false,
+  puede_eliminar: false,
+};
 
-function extractRol(claims: Record<string, unknown>): string | undefined {
-  const candidates = [claims.rol_id, (claims as any).rol, (claims as any).rol_nombre, (claims as any).rol_slug];
-  for (const c of candidates) {
-    if (typeof c === "string" && c.length > 0) return c;
-  }
-  return undefined;
-}
+const MODULO = "datos_maestros";
 
 export function usePermisos() {
   const { claims, loading } = useAuth();
-  const rol = extractRol(claims as Record<string, unknown>);
-  const canCrud = !!rol && CRUD_ROLES.has(rol);
+  const clienteId = (claims.empresa_id as string | undefined) ?? undefined;
+  const rolId = (claims.rol_id as string | undefined) ?? undefined;
 
-  const permisos: Permisos = {
-    puede_ver: true,
-    puede_crear: canCrud,
-    puede_editar: canCrud,
-    puede_eliminar: canCrud,
-  };
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["rol_permisos", clienteId, rolId, MODULO],
+    enabled: !!clienteId && !!rolId,
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("rol_permisos")
+        .select("puede_ver, puede_crear, puede_editar, puede_eliminar")
+        .eq("cliente_id", clienteId!)
+        .eq("rol_id", rolId!)
+        .eq("modulo", MODULO)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
 
-  return { permisos, isLoading: loading, error: null as Error | null };
+  const permisos: Permisos = data
+    ? {
+        puede_ver: !!data.puede_ver,
+        puede_crear: !!data.puede_crear,
+        puede_editar: !!data.puede_editar,
+        puede_eliminar: !!data.puede_eliminar,
+      }
+    : EMPTY;
+
+  return { permisos, isLoading: loading || isLoading, error: (error as Error) ?? null };
 }
