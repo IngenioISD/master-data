@@ -104,6 +104,7 @@ function ProyectoDetail() {
     },
     onSuccess: () => {
       toast.success("Cambios guardados");
+      setEditMode(false);
       qc.invalidateQueries({ queryKey: ["proyecto", id] });
       qc.invalidateQueries({ queryKey: ["proyectos"] });
     },
