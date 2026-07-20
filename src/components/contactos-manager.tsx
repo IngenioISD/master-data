@@ -84,25 +84,31 @@ export function ContactosManager({
 
   const upsert = useMutation({
     mutationFn: async (c: ContactoForm) => {
+      const payload = {
+        nombre: c.nombre,
+        apellido_1: c.apellido_1 || null,
+        apellido_2: c.apellido_2 || null,
+        departamento: normalizeDepartamento(c.departamento) || null,
+        telefono: c.telefono || null,
+        email: c.email || null,
+      };
+
       if (c.id) {
-        const { error } = await supabase.from(table).update({
-          nombre: c.nombre,
-          apellido_1: c.apellido_1 || null,
-          apellido_2: c.apellido_2 || null,
-          departamento: normalizeDepartamento(c.departamento) || null,
-          telefono: c.telefono || null,
-          email: c.email || null,
-        }).eq("id", c.id);
+        const { error, count } = await supabase
+          .from(table)
+          .update(payload, { count: "exact" })
+          .eq("id", c.id)
+          .select("id");
         if (error) throw error;
+        if (count === 0) {
+          throw new Error(
+            "No se ha guardado el contacto: la base de datos no permite actualizar esta fila.",
+          );
+        }
       } else {
         const { error } = await supabase.from(table).insert({
           [fkColumn]: fkValue,
-          nombre: c.nombre,
-          apellido_1: c.apellido_1 || null,
-          apellido_2: c.apellido_2 || null,
-          departamento: normalizeDepartamento(c.departamento) || null,
-          telefono: c.telefono || null,
-          email: c.email || null,
+          ...payload,
         });
         if (error) throw error;
       }
@@ -117,8 +123,15 @@ export function ContactosManager({
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from(table).delete().eq("id", id);
+      const { error, count } = await supabase
+        .from(table)
+        .delete({ count: "exact" })
+        .eq("id", id)
+        .select("id");
       if (error) throw error;
+      if (count === 0) {
+        throw new Error("No se ha eliminado el contacto: la base de datos no permite modificar esta fila.");
+      }
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey });
