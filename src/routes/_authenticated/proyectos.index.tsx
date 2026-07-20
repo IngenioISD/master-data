@@ -46,6 +46,7 @@ interface Row {
   id: string;
   nombre: string;
   codigo_obra: string | null;
+  codigo_estudios: string | null;
   estado: string | null;
   tipo_obra: string | null;
 }
