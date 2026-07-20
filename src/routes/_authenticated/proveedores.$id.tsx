@@ -91,6 +91,7 @@ function ProveedorDetail() {
           nombre_comercial: form.nombre_comercial || null,
           nif: form.nif,
           tipo_proveedor: form.tipo_proveedor,
+          tipo_via: form.tipo_via || null,
           nombre_via: form.via,
           numero: form.numero,
           codigo_postal: form.cp,
