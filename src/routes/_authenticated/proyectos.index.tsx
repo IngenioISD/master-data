@@ -64,9 +64,9 @@ function ProyectosList() {
     queryFn: async () => {
       let qb = supabase
         .from("proyectos")
-        .select("id, nombre, codigo_obra, estado, tipo_obra")
+        .select("id, nombre, codigo_obra, codigo_estudios, estado, tipo_obra")
         .eq("cliente_id", clienteId!);
-      if (q) qb = qb.or(`nombre.ilike.%${q}%,codigo_obra.ilike.%${q}%`);
+      if (q) qb = qb.or(`nombre.ilike.%${q}%,codigo_obra.ilike.%${q}%,codigo_estudios.ilike.%${q}%`);
       if (estado !== "__all") qb = qb.eq("estado", estado);
       const { data, error } = await qb.order("nombre");
       if (error) throw error;
