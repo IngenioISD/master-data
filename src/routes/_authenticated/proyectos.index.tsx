@@ -210,15 +210,34 @@ function NuevoProyectoDialog() {
       <DialogContent className="max-w-2xl">
         <DialogHeader><DialogTitle>Nuevo proyecto</DialogTitle></DialogHeader>
         <div className="space-y-4">
-          <div className="space-y-1.5">
-            <Label>Estado *</Label>
-            <Select value={estadoNuevo} onValueChange={(v) => setEstadoNuevo(v as "en_estudio" | "adjudicado")}>
-              <SelectTrigger><SelectValue placeholder="Selecciona…" /></SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en_estudio">En estudio</SelectItem>
-                <SelectItem value="adjudicado">Adjudicado</SelectItem>
-              </SelectContent>
-            </Select>
+          <div className={`grid grid-cols-1 gap-3 ${estadoNuevo === "en_estudio" ? "sm:grid-cols-3" : "sm:grid-cols-2"}`}>
+            <div className="space-y-1.5">
+              <Label>Estado *</Label>
+              <Select value={estadoNuevo} onValueChange={(v) => setEstadoNuevo(v as "en_estudio" | "adjudicado")}>
+                <SelectTrigger><SelectValue placeholder="Selecciona…" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en_estudio">En estudio</SelectItem>
+                  <SelectItem value="adjudicado">Adjudicado</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-1.5">
+              <Label>Tipo de obra *</Label>
+              <Select value={tipoObra} onValueChange={setTipoObra}>
+                <SelectTrigger><SelectValue placeholder="Selecciona…" /></SelectTrigger>
+                <SelectContent>
+                  {tipos.map((t) => (
+                    <SelectItem key={t.id} value={t.codigo}>{t.etiqueta || t.codigo}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            {estadoNuevo === "en_estudio" && (
+              <div className="space-y-1.5">
+                <Label>Código de estudios</Label>
+                <Input value={codigoEstudios} onChange={(e) => setCodigoEstudios(e.target.value)} />
+              </div>
+            )}
           </div>
           <div className="space-y-1.5">
             <Label>Nombre *</Label>
@@ -255,24 +274,7 @@ function NuevoProyectoDialog() {
               ¿No está? Créala primero desde la sección Propiedad.
             </p>
           </div>
-          <div className="space-y-1.5">
-            <Label>Tipo de obra *</Label>
-            <Select value={tipoObra} onValueChange={setTipoObra}>
-              <SelectTrigger><SelectValue placeholder="Selecciona…" /></SelectTrigger>
-              <SelectContent>
-                {tipos.map((t) => (
-                  <SelectItem key={t.id} value={t.codigo}>{t.etiqueta || t.codigo}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
 
-          {estadoNuevo === "en_estudio" && (
-            <div className="space-y-1.5">
-              <Label>Código de estudios</Label>
-              <Input value={codigoEstudios} onChange={(e) => setCodigoEstudios(e.target.value)} />
-            </div>
-          )}
 
           {estadoNuevo === "adjudicado" && (
             <div className="space-y-3 border-t pt-3">
