@@ -58,6 +58,7 @@ function ProyectoDetail() {
 
   const [nombre, setNombre] = useState("");
   const [tipoObra, setTipoObra] = useState("");
+  const [codigoEstudios, setCodigoEstudios] = useState("");
   const [propiedadId, setPropiedadId] = useState<string | null>(null);
   const [adjudicarOpen, setAdjudicarOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -66,6 +67,7 @@ function ProyectoDetail() {
     if (!data) return;
     setNombre(data.nombre ?? "");
     setTipoObra(data.tipo_obra ?? "");
+    setCodigoEstudios(data.codigo_estudios ?? "");
     setPropiedadId(data.propiedad_id ?? null);
   };
 
@@ -73,9 +75,11 @@ function ProyectoDetail() {
     if (data) {
       setNombre(data.nombre ?? "");
       setTipoObra(data.tipo_obra ?? "");
+      setCodigoEstudios(data.codigo_estudios ?? "");
       setPropiedadId(data.propiedad_id ?? null);
     }
   }, [data]);
+
 
   const { data: tipos = [] } = useQuery({
     queryKey: ["catalogo", "tipo_obra"],
@@ -98,10 +102,12 @@ function ProyectoDetail() {
           nombre,
           tipo_obra: tipoObra,
           propiedad_id: propiedadId,
+          codigo_estudios: data?.estado === "en_estudio" ? (codigoEstudios || null) : data?.codigo_estudios ?? null,
         })
         .eq("id", id);
       if (error) throw error;
     },
+
     onSuccess: () => {
       toast.success("Cambios guardados");
       setEditMode(false);
@@ -193,6 +199,12 @@ function ProyectoDetail() {
                 <Label>Nombre</Label>
                 <Input value={nombre} onChange={(e) => setNombre(e.target.value)} />
               </div>
+              {data.estado === "en_estudio" && (
+                <div className="space-y-1.5">
+                  <Label>Código de estudios</Label>
+                  <Input value={codigoEstudios} onChange={(e) => setCodigoEstudios(e.target.value)} />
+                </div>
+              )}
               <div className="space-y-1.5">
                 <Label>Tipo de obra</Label>
                 <Select value={tipoObra} onValueChange={setTipoObra}>
@@ -208,6 +220,7 @@ function ProyectoDetail() {
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-1.5 sm:col-span-2">
                 <Label>Propiedad</Label>
                 <PropiedadPicker value={propiedadId} onChange={setPropiedadId} />
@@ -216,12 +229,16 @@ function ProyectoDetail() {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Nombre" value={nombre} />
+              {data.estado === "en_estudio" && (
+                <Field label="Código de estudios" value={codigoEstudios} />
+              )}
               <Field label="Tipo de obra" value={tipoObraLabel} />
               <div className="space-y-1 sm:col-span-2">
                 <Label className="text-muted-foreground">Propiedad</Label>
                 <PropiedadReadOnly propiedadId={propiedadId} />
               </div>
             </div>
+
           )}
 
           {data.estado === "adjudicado" && (
