@@ -200,11 +200,11 @@ function ProveedorDetail() {
                 <div className="space-y-1.5">
                   <Label>Tipo de proveedor</Label>
                   <Select
-                    value={form.tipo_proveedor}
+                    value={form.tipo_proveedor || undefined}
                     onValueChange={(v) => setForm({ ...form, tipo_proveedor: v })}
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Selecciona…" />
                     </SelectTrigger>
                     <SelectContent>
                       {TIPOS.map((t) => (
