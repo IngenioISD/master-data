@@ -24,7 +24,31 @@ interface Contacto {
   email: string | null;
 }
 
-const DEPARTAMENTOS = ["Administración", "Ventas", "Dirección", "Operaciones", "Otro"] as const;
+interface ContactoForm {
+  id?: string;
+  nombre: string;
+  apellido_1: string;
+  apellido_2: string;
+  departamento: string;
+  telefono: string;
+  email: string;
+}
+
+const DEPARTAMENTOS = [
+  { value: "administracion", label: "Administración" },
+  { value: "ventas", label: "Ventas" },
+  { value: "direccion", label: "Dirección" },
+  { value: "operaciones", label: "Operaciones" },
+  { value: "otro", label: "Otro" },
+] as const;
+
+const normalizeDepartamento = (value: string | null | undefined) => {
+  const normalized = (value ?? "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return DEPARTAMENTOS.some((departamento) => departamento.value === normalized) ? normalized : "";
+};
+
+const departamentoLabel = (value: string | null | undefined) =>
+  DEPARTAMENTOS.find((departamento) => departamento.value === normalizeDepartamento(value))?.label ?? value ?? "";
 
 interface Props {
   table: "propiedad_contactos" | "proveedor_contactos";
@@ -60,29 +84,29 @@ export function ContactosManager({
     },
   });
 
-  const [editing, setEditing] = useState<Contacto | null>(null);
+  const [editing, setEditing] = useState<ContactoForm | null>(null);
 
   const upsert = useMutation({
-    mutationFn: async (c: Contacto) => {
+    mutationFn: async (c: ContactoForm) => {
       if (c.id) {
         const { error } = await supabase.from(table).update({
           nombre: c.nombre,
-          apellido_1: c.apellido_1,
-          apellido_2: c.apellido_2,
-          departamento: c.departamento,
-          telefono: c.telefono,
-          email: c.email,
+          apellido_1: c.apellido_1 || null,
+          apellido_2: c.apellido_2 || null,
+          departamento: c.departamento || null,
+          telefono: c.telefono || null,
+          email: c.email || null,
         }).eq("id", c.id);
         if (error) throw error;
       } else {
         const { error } = await supabase.from(table).insert({
           [fkColumn]: fkValue,
           nombre: c.nombre,
-          apellido_1: c.apellido_1,
-          apellido_2: c.apellido_2,
-          departamento: c.departamento,
-          telefono: c.telefono,
-          email: c.email,
+          apellido_1: c.apellido_1 || null,
+          apellido_2: c.apellido_2 || null,
+          departamento: c.departamento || null,
+          telefono: c.telefono || null,
+          email: c.email || null,
         });
         if (error) throw error;
       }
@@ -119,7 +143,7 @@ export function ContactosManager({
                 nombre: "",
                 apellido_1: "",
                 apellido_2: "",
-                departamento: "Administración",
+                departamento: "administracion",
                 telefono: "",
                 email: "",
               })
@@ -158,18 +182,32 @@ export function ContactosManager({
             )}
             {contactos.map((c) =>
               editing?.id === c.id ? (
-                <ContactoEditRow key={c.id} value={editing!} onChange={(v) => setEditing(v)} onCancel={() => setEditing(null)} onSave={() => editing && upsert.mutate(editing)} />
+                <ContactoEditRow key={c.id} value={editing!} onChange={(v) => setEditing(v)} onCancel={() => setEditing(null)} onSave={(v) => upsert.mutate(v)} />
               ) : (
                 <TableRow key={c.id}>
                   <TableCell>
                     {c.nombre} {c.apellido_1 ?? ""} {c.apellido_2 ?? ""}
                   </TableCell>
-                  <TableCell>{c.departamento}</TableCell>
+                  <TableCell>{departamentoLabel(c.departamento) || "—"}</TableCell>
                   <TableCell>{c.telefono}</TableCell>
                   <TableCell>{c.email}</TableCell>
                   <TableCell className="text-right">
                     {canEdit && (
-                      <Button size="icon" variant="ghost" onClick={() => setEditing(c)}>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() =>
+                          setEditing({
+                            id: c.id,
+                            nombre: c.nombre,
+                            apellido_1: c.apellido_1 ?? "",
+                            apellido_2: c.apellido_2 ?? "",
+                            departamento: normalizeDepartamento(c.departamento),
+                            telefono: c.telefono ?? "",
+                            email: c.email ?? "",
+                          })
+                        }
+                      >
                         <Pencil className="h-4 w-4" />
                       </Button>
                     )}
@@ -184,7 +222,7 @@ export function ContactosManager({
               ),
             )}
             {editing && !editing.id && (
-              <ContactoEditRow value={editing} onChange={setEditing} onCancel={() => setEditing(null)} onSave={() => upsert.mutate(editing)} />
+              <ContactoEditRow value={editing} onChange={setEditing} onCancel={() => setEditing(null)} onSave={(v) => upsert.mutate(v)} />
             )}
           </TableBody>
         </Table>
@@ -199,10 +237,10 @@ function ContactoEditRow({
   onCancel,
   onSave,
 }: {
-  value: Contacto;
-  onChange: (c: Contacto) => void;
+  value: ContactoForm;
+  onChange: (c: ContactoForm) => void;
   onCancel: () => void;
-  onSave: () => void;
+  onSave: (c: ContactoForm) => void;
 }) {
   return (
     <TableRow>
@@ -227,7 +265,7 @@ function ContactoEditRow({
       </TableCell>
       <TableCell>
         <Select
-          value={value.departamento ?? ""}
+          value={value.departamento}
           onValueChange={(v) => onChange({ ...value, departamento: v })}
         >
           <SelectTrigger>
@@ -235,8 +273,8 @@ function ContactoEditRow({
           </SelectTrigger>
           <SelectContent>
             {DEPARTAMENTOS.map((d) => (
-              <SelectItem key={d} value={d}>
-                {d}
+              <SelectItem key={d.value} value={d.value}>
+                {d.label}
               </SelectItem>
             ))}
           </SelectContent>
@@ -244,19 +282,19 @@ function ContactoEditRow({
       </TableCell>
       <TableCell>
         <Input
-          value={value.telefono ?? ""}
+          value={value.telefono}
           onChange={(e) => onChange({ ...value, telefono: e.target.value })}
         />
       </TableCell>
       <TableCell>
         <Input
           type="email"
-          value={value.email ?? ""}
+          value={value.email}
           onChange={(e) => onChange({ ...value, email: e.target.value })}
         />
       </TableCell>
       <TableCell className="text-right">
-        <Button size="icon" variant="ghost" onClick={onSave} disabled={!value.nombre}>
+        <Button size="icon" variant="ghost" onClick={() => onSave(value)} disabled={!value.nombre}>
           <Save className="h-4 w-4" />
         </Button>
         <Button size="icon" variant="ghost" onClick={onCancel}>
