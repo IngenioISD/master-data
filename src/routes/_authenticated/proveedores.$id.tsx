@@ -26,6 +26,7 @@ interface FormState extends DireccionFiscal {
   nombre_comercial: string;
   nif: string;
   tipo_proveedor: string;
+  tipo_via: string;
 }
 
 const EMPTY: FormState = {
@@ -33,6 +34,7 @@ const EMPTY: FormState = {
   nombre_comercial: "",
   nif: "",
   tipo_proveedor: "Material",
+  tipo_via: "",
   via: "",
   numero: "",
   cp: "",
