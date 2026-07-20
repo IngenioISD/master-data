@@ -178,7 +178,10 @@ function ProveedorDetail() {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="space-y-1.5">
                   <Label>NIF</Label>
-                  <Input value={form.nif} onChange={(e) => setForm({ ...form, nif: e.target.value })} />
+                  <Input
+                    value={form.nif}
+                    onChange={(e) => setForm({ ...form, nif: e.target.value.toUpperCase() })}
+                  />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label>Nombre legal</Label>
