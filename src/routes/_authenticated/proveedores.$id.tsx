@@ -243,7 +243,8 @@ function ProveedorDetail() {
               <div className="pt-6 mt-6 border-t border-transparent">
                 <h3 className="text-sm font-semibold mb-4">Domicilio fiscal</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-6">
-                  <Field label="Vía" value={form.via ?? ""} colSpan="sm:col-span-4" />
+                  <Field label="Tipo de vía" value={form.tipo_via} colSpan="sm:col-span-2" />
+                  <Field label="Nombre de la vía" value={form.via ?? ""} colSpan="sm:col-span-2" />
                   <Field label="Número" value={form.numero ?? ""} colSpan="sm:col-span-2" />
                   <Field label="CP" value={form.cp ?? ""} colSpan="sm:col-span-2" />
                   <Field label="Municipio" value={form.municipio ?? ""} colSpan="sm:col-span-2" />
