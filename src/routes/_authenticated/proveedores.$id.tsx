@@ -26,6 +26,7 @@ interface FormState extends DireccionFiscal {
   nombre_comercial: string;
   nif: string;
   tipo_proveedor: string;
+  tipo_via: string;
 }
 
 const EMPTY: FormState = {
@@ -33,6 +34,7 @@ const EMPTY: FormState = {
   nombre_comercial: "",
   nif: "",
   tipo_proveedor: "Material",
+  tipo_via: "",
   via: "",
   numero: "",
   cp: "",
@@ -66,7 +68,8 @@ function ProveedorDetail() {
     nombre_legal: d.nombre_legal ?? "",
     nombre_comercial: d.nombre_comercial ?? "",
     nif: d.nif ?? "",
-    tipo_proveedor: d.tipo_proveedor ?? "Material",
+    tipo_proveedor: d.tipo_proveedor ?? "",
+    tipo_via: d.tipo_via ?? "",
     via: d.nombre_via ?? "",
     numero: d.numero ?? "",
     cp: d.codigo_postal ?? "",
@@ -88,6 +91,7 @@ function ProveedorDetail() {
           nombre_comercial: form.nombre_comercial || null,
           nif: form.nif,
           tipo_proveedor: form.tipo_proveedor,
+          tipo_via: form.tipo_via || null,
           nombre_via: form.via,
           numero: form.numero,
           codigo_postal: form.cp,
@@ -174,7 +178,10 @@ function ProveedorDetail() {
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                 <div className="space-y-1.5">
                   <Label>NIF</Label>
-                  <Input value={form.nif} onChange={(e) => setForm({ ...form, nif: e.target.value })} />
+                  <Input
+                    value={form.nif}
+                    onChange={(e) => setForm({ ...form, nif: e.target.value.toUpperCase() })}
+                  />
                 </div>
                 <div className="space-y-1.5 sm:col-span-2">
                   <Label>Nombre legal</Label>
@@ -193,11 +200,11 @@ function ProveedorDetail() {
                 <div className="space-y-1.5">
                   <Label>Tipo de proveedor</Label>
                   <Select
-                    value={form.tipo_proveedor}
+                    value={form.tipo_proveedor || undefined}
                     onValueChange={(v) => setForm({ ...form, tipo_proveedor: v })}
                   >
                     <SelectTrigger>
-                      <SelectValue />
+                      <SelectValue placeholder="Selecciona…" />
                     </SelectTrigger>
                     <SelectContent>
                       {TIPOS.map((t) => (
@@ -211,6 +218,17 @@ function ProveedorDetail() {
               </div>
               <div className="pt-6 mt-6 border-t border-transparent">
                 <h3 className="text-sm font-semibold mb-4">Domicilio fiscal</h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-6 mb-3">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label htmlFor="tipo_via">Tipo de vía</Label>
+                    <Input
+                      id="tipo_via"
+                      placeholder="Calle, Avenida..."
+                      value={form.tipo_via}
+                      onChange={(e) => setForm({ ...form, tipo_via: e.target.value })}
+                    />
+                  </div>
+                </div>
                 <DireccionFiscalFields value={form} onChange={(d) => setForm({ ...form, ...d })} />
               </div>
             </>
@@ -225,7 +243,8 @@ function ProveedorDetail() {
               <div className="pt-6 mt-6 border-t border-transparent">
                 <h3 className="text-sm font-semibold mb-4">Domicilio fiscal</h3>
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-6">
-                  <Field label="Vía" value={form.via ?? ""} colSpan="sm:col-span-4" />
+                  <Field label="Tipo de vía" value={form.tipo_via} colSpan="sm:col-span-2" />
+                  <Field label="Nombre de la vía" value={form.via ?? ""} colSpan="sm:col-span-2" />
                   <Field label="Número" value={form.numero ?? ""} colSpan="sm:col-span-2" />
                   <Field label="CP" value={form.cp ?? ""} colSpan="sm:col-span-2" />
                   <Field label="Municipio" value={form.municipio ?? ""} colSpan="sm:col-span-2" />
