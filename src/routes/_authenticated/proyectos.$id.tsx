@@ -58,6 +58,7 @@ function ProyectoDetail() {
 
   const [nombre, setNombre] = useState("");
   const [tipoObra, setTipoObra] = useState("");
+  const [codigoEstudios, setCodigoEstudios] = useState("");
   const [propiedadId, setPropiedadId] = useState<string | null>(null);
   const [adjudicarOpen, setAdjudicarOpen] = useState(false);
   const [editMode, setEditMode] = useState(false);
@@ -66,6 +67,7 @@ function ProyectoDetail() {
     if (!data) return;
     setNombre(data.nombre ?? "");
     setTipoObra(data.tipo_obra ?? "");
+    setCodigoEstudios(data.codigo_estudios ?? "");
     setPropiedadId(data.propiedad_id ?? null);
   };
 
@@ -73,9 +75,11 @@ function ProyectoDetail() {
     if (data) {
       setNombre(data.nombre ?? "");
       setTipoObra(data.tipo_obra ?? "");
+      setCodigoEstudios(data.codigo_estudios ?? "");
       setPropiedadId(data.propiedad_id ?? null);
     }
   }, [data]);
+
 
   const { data: tipos = [] } = useQuery({
     queryKey: ["catalogo", "tipo_obra"],
