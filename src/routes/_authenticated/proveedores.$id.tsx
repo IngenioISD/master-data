@@ -218,7 +218,7 @@ function ProveedorDetail() {
               </div>
               <div className="pt-6 mt-6 border-t border-transparent">
                 <h3 className="text-sm font-semibold mb-4">Domicilio fiscal</h3>
-                <div className="grid grid-cols-1 gap-3 sm:grid-cols-6 mb-3">
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-10">
                   <div className="space-y-1.5 sm:col-span-2">
                     <Label htmlFor="tipo_via">Tipo de vía</Label>
                     <Input
@@ -228,8 +228,55 @@ function ProveedorDetail() {
                       onChange={(e) => setForm({ ...form, tipo_via: e.target.value })}
                     />
                   </div>
+                  <div className="space-y-1.5 sm:col-span-6">
+                    <Label htmlFor="via">Vía</Label>
+                    <Input
+                      id="via"
+                      value={form.via ?? ""}
+                      onChange={(e) => setForm({ ...form, via: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label htmlFor="numero">Número</Label>
+                    <Input
+                      id="numero"
+                      value={form.numero ?? ""}
+                      onChange={(e) => setForm({ ...form, numero: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-3">
+                    <Label htmlFor="cp">Código Postal</Label>
+                    <Input
+                      id="cp"
+                      value={form.cp ?? ""}
+                      onChange={(e) => setForm({ ...form, cp: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-3">
+                    <Label htmlFor="municipio">Municipio</Label>
+                    <Input
+                      id="municipio"
+                      value={form.municipio ?? ""}
+                      onChange={(e) => setForm({ ...form, municipio: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-4">
+                    <Label htmlFor="provincia">Provincia</Label>
+                    <Input
+                      id="provincia"
+                      value={form.provincia ?? ""}
+                      onChange={(e) => setForm({ ...form, provincia: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-1.5 sm:col-span-10">
+                    <Label htmlFor="pais">País</Label>
+                    <Input
+                      id="pais"
+                      value={form.pais ?? "España"}
+                      onChange={(e) => setForm({ ...form, pais: e.target.value })}
+                    />
+                  </div>
                 </div>
-                <DireccionFiscalFields value={form} onChange={(d) => setForm({ ...form, ...d })} />
               </div>
             </>
           ) : (
