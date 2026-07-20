@@ -113,7 +113,7 @@ function ProyectosList() {
             {data.map((p) => (
               <TableRow key={p.id}>
                 <TableCell className="font-medium">{p.nombre}</TableCell>
-                <TableCell>{p.codigo_obra ?? "—"}</TableCell>
+                <TableCell>{(p.estado === "en_estudio" ? p.codigo_estudios : p.codigo_obra) ?? "—"}</TableCell>
                 <TableCell>{p.tipo_obra ?? "—"}</TableCell>
                 <TableCell>{p.estado && <Badge className={estadoColor[p.estado]}>{estadoLabel(p.estado)}</Badge>}</TableCell>
                 <TableCell className="text-right">
