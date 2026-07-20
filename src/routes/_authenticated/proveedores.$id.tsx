@@ -218,6 +218,17 @@ function ProveedorDetail() {
               </div>
               <div className="pt-6 mt-6 border-t border-transparent">
                 <h3 className="text-sm font-semibold mb-4">Domicilio fiscal</h3>
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-6 mb-3">
+                  <div className="space-y-1.5 sm:col-span-2">
+                    <Label htmlFor="tipo_via">Tipo de vía</Label>
+                    <Input
+                      id="tipo_via"
+                      placeholder="Calle, Avenida..."
+                      value={form.tipo_via}
+                      onChange={(e) => setForm({ ...form, tipo_via: e.target.value })}
+                    />
+                  </div>
+                </div>
                 <DireccionFiscalFields value={form} onChange={(d) => setForm({ ...form, ...d })} />
               </div>
             </>
