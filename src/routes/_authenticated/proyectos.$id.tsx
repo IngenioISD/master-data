@@ -221,7 +221,7 @@ function ProyectoDetail() {
                 </Select>
               </div>
 
-              <div className="space-y-1.5 sm:col-span-2">
+              <div className={`space-y-1.5 ${data.estado === "en_estudio" ? "sm:col-span-3" : "sm:col-span-2"}`}>
                 <Label>Propiedad</Label>
                 <PropiedadPicker value={propiedadId} onChange={setPropiedadId} />
               </div>
