@@ -292,7 +292,7 @@ function NuevoProyectoDialog() {
               </div>
               <div className="space-y-2">
                 <Label className="text-sm font-medium">Dirección de la obra *</Label>
-                <DireccionFiscalFields value={dirObra} onChange={(v) => setDirObra({
+                <DireccionFiscalFields value={dirObra} onChange={(v: DireccionFiscal) => setDirObra({
                   via: v.via ?? "", numero: v.numero ?? "", cp: v.cp ?? "",
                   municipio: v.municipio ?? "", provincia: v.provincia ?? "",
                 })} requiredKeys={["municipio", "provincia"]} hidePais />
