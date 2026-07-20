@@ -229,12 +229,16 @@ function ProyectoDetail() {
           ) : (
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <Field label="Nombre" value={nombre} />
+              {data.estado === "en_estudio" && (
+                <Field label="Código de estudios" value={codigoEstudios} />
+              )}
               <Field label="Tipo de obra" value={tipoObraLabel} />
               <div className="space-y-1 sm:col-span-2">
                 <Label className="text-muted-foreground">Propiedad</Label>
                 <PropiedadReadOnly propiedadId={propiedadId} />
               </div>
             </div>
+
           )}
 
           {data.estado === "adjudicado" && (
