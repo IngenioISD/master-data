@@ -199,6 +199,12 @@ function ProyectoDetail() {
                 <Label>Nombre</Label>
                 <Input value={nombre} onChange={(e) => setNombre(e.target.value)} />
               </div>
+              {data.estado === "en_estudio" && (
+                <div className="space-y-1.5">
+                  <Label>Código de estudios</Label>
+                  <Input value={codigoEstudios} onChange={(e) => setCodigoEstudios(e.target.value)} />
+                </div>
+              )}
               <div className="space-y-1.5">
                 <Label>Tipo de obra</Label>
                 <Select value={tipoObra} onValueChange={setTipoObra}>
@@ -214,6 +220,7 @@ function ProyectoDetail() {
                   </SelectContent>
                 </Select>
               </div>
+
               <div className="space-y-1.5 sm:col-span-2">
                 <Label>Propiedad</Label>
                 <PropiedadPicker value={propiedadId} onChange={setPropiedadId} />
