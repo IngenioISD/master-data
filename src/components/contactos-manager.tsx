@@ -34,21 +34,17 @@ interface ContactoForm {
   email: string;
 }
 
-const DEPARTAMENTOS = [
-  { value: "administracion", label: "Administración" },
-  { value: "ventas", label: "Ventas" },
-  { value: "direccion", label: "Dirección" },
-  { value: "operaciones", label: "Operaciones" },
-  { value: "otro", label: "Otro" },
-] as const;
+const DEPARTAMENTOS = ["Administración", "Ventas", "Dirección", "Operaciones", "Otro"] as const;
 
 const normalizeDepartamento = (value: string | null | undefined) => {
   const normalized = (value ?? "").trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-  return DEPARTAMENTOS.some((departamento) => departamento.value === normalized) ? normalized : "";
+  return DEPARTAMENTOS.find(
+    (departamento) => departamento.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "") === normalized,
+  ) ?? "";
 };
 
 const departamentoLabel = (value: string | null | undefined) =>
-  DEPARTAMENTOS.find((departamento) => departamento.value === normalizeDepartamento(value))?.label ?? value ?? "";
+  normalizeDepartamento(value) || value || "";
 
 interface Props {
   table: "propiedad_contactos" | "proveedor_contactos";
@@ -93,7 +89,7 @@ export function ContactosManager({
           nombre: c.nombre,
           apellido_1: c.apellido_1 || null,
           apellido_2: c.apellido_2 || null,
-          departamento: c.departamento || null,
+          departamento: normalizeDepartamento(c.departamento) || null,
           telefono: c.telefono || null,
           email: c.email || null,
         }).eq("id", c.id);
@@ -104,7 +100,7 @@ export function ContactosManager({
           nombre: c.nombre,
           apellido_1: c.apellido_1 || null,
           apellido_2: c.apellido_2 || null,
-          departamento: c.departamento || null,
+          departamento: normalizeDepartamento(c.departamento) || null,
           telefono: c.telefono || null,
           email: c.email || null,
         });
@@ -143,7 +139,7 @@ export function ContactosManager({
                 nombre: "",
                 apellido_1: "",
                 apellido_2: "",
-                departamento: "administracion",
+                departamento: "Administración",
                 telefono: "",
                 email: "",
               })
@@ -273,8 +269,8 @@ function ContactoEditRow({
           </SelectTrigger>
           <SelectContent>
             {DEPARTAMENTOS.map((d) => (
-              <SelectItem key={d.value} value={d.value}>
-                {d.label}
+              <SelectItem key={d} value={d}>
+                {d}
               </SelectItem>
             ))}
           </SelectContent>
