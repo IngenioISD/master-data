@@ -18,6 +18,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { BuscarOCrearCombobox } from "@/components/buscar-o-crear-combobox";
+import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
 
 export const Route = createFileRoute("/_authenticated/proyectos/")({
   head: () => ({ meta: [{ title: "Proyectos · Datos Maestros" }] }),
