@@ -14,7 +14,19 @@ import { ContactosManager } from "@/components/contactos-manager";
 import { DireccionFiscalFields, type DireccionFiscal } from "@/components/direccion-fiscal-fields";
 import { usePermisos } from "@/lib/permisos";
 
-const TIPOS = ["Material", "Servicios", "Mixto"] as const;
+const TIPOS = [
+  { value: "material", label: "Material" },
+  { value: "servicios", label: "Servicios" },
+  { value: "mixto", label: "Mixto" },
+] as const;
+
+const normalizeTipoProveedor = (value: string | null | undefined) => {
+  const normalized = (value ?? "").trim().toLowerCase();
+  return TIPOS.some((tipo) => tipo.value === normalized) ? normalized : "";
+};
+
+const tipoProveedorLabel = (value: string) =>
+  TIPOS.find((tipo) => tipo.value === normalizeTipoProveedor(value))?.label ?? value;
 
 export const Route = createFileRoute("/_authenticated/proveedores/$id")({
   head: () => ({ meta: [{ title: "Proveedor · Datos Maestros" }] }),
@@ -33,7 +45,7 @@ const EMPTY: FormState = {
   nombre_legal: "",
   nombre_comercial: "",
   nif: "",
-  tipo_proveedor: "Material",
+  tipo_proveedor: "material",
   tipo_via: "",
   via: "",
   numero: "",
@@ -68,7 +80,7 @@ function ProveedorDetail() {
     nombre_legal: d.nombre_legal ?? "",
     nombre_comercial: d.nombre_comercial ?? "",
     nif: d.nif ?? "",
-    tipo_proveedor: d.tipo_proveedor ?? "",
+    tipo_proveedor: normalizeTipoProveedor(d.tipo_proveedor),
     tipo_via: d.tipo_via ?? "",
     via: d.nombre_via ?? "",
     numero: d.numero ?? "",
@@ -90,7 +102,7 @@ function ProveedorDetail() {
           nombre_legal: form.nombre_legal,
           nombre_comercial: form.nombre_comercial || null,
           nif: form.nif,
-          tipo_proveedor: form.tipo_proveedor,
+          tipo_proveedor: form.tipo_proveedor || null,
           tipo_via: form.tipo_via || null,
           nombre_via: form.via,
           numero: form.numero,
@@ -200,7 +212,7 @@ function ProveedorDetail() {
                 <div className="space-y-1.5">
                   <Label>Tipo de proveedor</Label>
                   <Select
-                    value={form.tipo_proveedor || undefined}
+                    value={form.tipo_proveedor}
                     onValueChange={(v) => setForm({ ...form, tipo_proveedor: v })}
                   >
                     <SelectTrigger>
@@ -208,8 +220,8 @@ function ProveedorDetail() {
                     </SelectTrigger>
                     <SelectContent>
                       {TIPOS.map((t) => (
-                        <SelectItem key={t} value={t}>
-                          {t}
+                        <SelectItem key={t.value} value={t.value}>
+                          {t.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -285,7 +297,7 @@ function ProveedorDetail() {
                 <Field label="NIF" value={form.nif} />
                 <Field label="Nombre legal" value={form.nombre_legal} colSpan="sm:col-span-2" />
                 <Field label="Nombre comercial" value={form.nombre_comercial} colSpan="sm:col-span-3" />
-                <Field label="Tipo de proveedor" value={form.tipo_proveedor} />
+                <Field label="Tipo de proveedor" value={tipoProveedorLabel(form.tipo_proveedor)} />
               </div>
               <div className="pt-6 mt-6 border-t border-transparent">
                 <h3 className="text-sm font-semibold mb-4">Domicilio fiscal</h3>
