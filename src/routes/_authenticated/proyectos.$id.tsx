@@ -102,10 +102,12 @@ function ProyectoDetail() {
           nombre,
           tipo_obra: tipoObra,
           propiedad_id: propiedadId,
+          codigo_estudios: data?.estado === "en_estudio" ? (codigoEstudios || null) : data?.codigo_estudios ?? null,
         })
         .eq("id", id);
       if (error) throw error;
     },
+
     onSuccess: () => {
       toast.success("Cambios guardados");
       setEditMode(false);
