@@ -269,11 +269,36 @@ export function ContactosManager({
               ),
             )}
             {editing && !editing.id && (
-              <ContactoEditRow value={editing} onChange={setEditing} onCancel={() => setEditing(null)} onSave={(v) => upsert.mutate(v)} />
+              <ContactoEditRow value={editing} onChange={setEditing} onCancel={() => setEditing(null)} onSave={handleSave} />
             )}
           </TableBody>
         </Table>
       </div>
+      <AlertDialog
+        open={!!duplicatePending}
+        onOpenChange={(open) => {
+          if (!open) setDuplicatePending(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Contacto duplicado</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ya existe un contacto con ese nombre en este proveedor. ¿Quieres añadirlo igualmente?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (duplicatePending) upsert.mutate(duplicatePending);
+              }}
+            >
+              Añadir de todas formas
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
