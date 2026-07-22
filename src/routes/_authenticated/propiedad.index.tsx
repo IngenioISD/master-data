@@ -183,14 +183,23 @@ function NuevaPropiedadDialog() {
   const [dir, setDir] = useState<DireccionFiscal>({ pais: "España" });
   const [submitting, setSubmitting] = useState(false);
 
+  function normalizeNif(v: string) {
+    return v
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^A-Za-z0-9]/g, "")
+      .toUpperCase();
+  }
+
   async function buscarPorNif() {
     setChecked(false);
     setExistente(null);
-    if (!nif.trim()) return;
+    const nifNorm = normalizeNif(nif);
+    if (!nifNorm) return;
     const { data, error } = await supabase
       .from("propiedad")
       .select("id, nombre_legal")
-      .eq("nif", nif.trim())
+      .eq("nif", nifNorm)
       .maybeSingle();
     if (error) {
       toast.error(error.message);
@@ -225,7 +234,7 @@ function NuevaPropiedadDialog() {
     const { data: nueva, error } = await supabase
       .from("propiedad")
       .insert({
-        nif: nif.trim(),
+        nif: normalizeNif(nif),
         nombre_legal: nombreLegal.trim(),
       })
       .select("id")
@@ -275,7 +284,7 @@ function NuevaPropiedadDialog() {
           <div className="flex gap-2">
             <div className="flex-1 space-y-1.5">
               <Label htmlFor="nif">NIF</Label>
-              <Input id="nif" value={nif} onChange={(e) => setNif(e.target.value)} />
+              <Input id="nif" value={nif} onChange={(e) => setNif(normalizeNif(e.target.value))} />
             </div>
             <div className="flex items-end">
               <Button type="button" variant="outline" onClick={buscarPorNif}>Buscar</Button>
