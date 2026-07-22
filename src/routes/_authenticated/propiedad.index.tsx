@@ -183,14 +183,23 @@ function NuevaPropiedadDialog() {
   const [dir, setDir] = useState<DireccionFiscal>({ pais: "España" });
   const [submitting, setSubmitting] = useState(false);
 
+  function normalizeNif(v: string) {
+    return v
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^A-Za-z0-9]/g, "")
+      .toUpperCase();
+  }
+
   async function buscarPorNif() {
     setChecked(false);
     setExistente(null);
-    if (!nif.trim()) return;
+    const nifNorm = normalizeNif(nif);
+    if (!nifNorm) return;
     const { data, error } = await supabase
       .from("propiedad")
       .select("id, nombre_legal")
-      .eq("nif", nif.trim())
+      .eq("nif", nifNorm)
       .maybeSingle();
     if (error) {
       toast.error(error.message);
