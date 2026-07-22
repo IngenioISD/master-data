@@ -12,6 +12,16 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 
 interface Contacto {
@@ -81,6 +91,7 @@ export function ContactosManager({
   });
 
   const [editing, setEditing] = useState<ContactoForm | null>(null);
+  const [duplicatePending, setDuplicatePending] = useState<ContactoForm | null>(null);
 
   const upsert = useMutation({
     mutationFn: async (c: ContactoForm) => {
@@ -116,10 +127,37 @@ export function ContactosManager({
     onSuccess: () => {
       qc.invalidateQueries({ queryKey });
       setEditing(null);
+      setDuplicatePending(null);
       toast.success("Contacto guardado");
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const handleSave = async (c: ContactoForm) => {
+    // Duplicate check only when creating (no id) on proveedor_contactos
+    if (!c.id && table === "proveedor_contactos") {
+      const nombre = c.nombre.trim();
+      const apellido1 = (c.apellido_1 || "").trim();
+      let query = supabase
+        .from(table)
+        .select("id")
+        .eq(fkColumn, fkValue)
+        .ilike("nombre", nombre);
+      query = apellido1
+        ? query.ilike("apellido_1", apellido1)
+        : query.is("apellido_1", null);
+      const { data, error } = await query.limit(1);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data && data.length > 0) {
+        setDuplicatePending(c);
+        return;
+      }
+    }
+    upsert.mutate(c);
+  };
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
@@ -128,8 +166,8 @@ export function ContactosManager({
         .delete({ count: "exact" })
         .eq("id", id)
         .select("id");
-      if (error) throw error;
-      if (count === 0) {
+        if (error) throw error;
+        if (count === 0) {
         throw new Error("No se ha eliminado el contacto: la base de datos no permite modificar esta fila.");
       }
     },
@@ -191,7 +229,7 @@ export function ContactosManager({
             )}
             {contactos.map((c) =>
               editing?.id === c.id ? (
-                <ContactoEditRow key={c.id} value={editing!} onChange={(v) => setEditing(v)} onCancel={() => setEditing(null)} onSave={(v) => upsert.mutate(v)} />
+                <ContactoEditRow key={c.id} value={editing!} onChange={(v) => setEditing(v)} onCancel={() => setEditing(null)} onSave={handleSave} />
               ) : (
                 <TableRow key={c.id}>
                   <TableCell>
@@ -231,11 +269,36 @@ export function ContactosManager({
               ),
             )}
             {editing && !editing.id && (
-              <ContactoEditRow value={editing} onChange={setEditing} onCancel={() => setEditing(null)} onSave={(v) => upsert.mutate(v)} />
+              <ContactoEditRow value={editing} onChange={setEditing} onCancel={() => setEditing(null)} onSave={handleSave} />
             )}
           </TableBody>
         </Table>
       </div>
+      <AlertDialog
+        open={!!duplicatePending}
+        onOpenChange={(open) => {
+          if (!open) setDuplicatePending(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Contacto duplicado</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ya existe un contacto con ese nombre en este proveedor. ¿Quieres añadirlo igualmente?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (duplicatePending) upsert.mutate(duplicatePending);
+              }}
+            >
+              Añadir de todas formas
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
