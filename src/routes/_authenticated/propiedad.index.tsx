@@ -234,7 +234,7 @@ function NuevaPropiedadDialog() {
     const { data: nueva, error } = await supabase
       .from("propiedad")
       .insert({
-        nif: nif.trim(),
+        nif: normalizeNif(nif),
         nombre_legal: nombreLegal.trim(),
       })
       .select("id")
