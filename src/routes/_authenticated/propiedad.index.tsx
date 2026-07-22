@@ -284,7 +284,7 @@ function NuevaPropiedadDialog() {
           <div className="flex gap-2">
             <div className="flex-1 space-y-1.5">
               <Label htmlFor="nif">NIF</Label>
-              <Input id="nif" value={nif} onChange={(e) => setNif(e.target.value)} />
+              <Input id="nif" value={nif} onChange={(e) => setNif(normalizeNif(e.target.value))} />
             </div>
             <div className="flex items-end">
               <Button type="button" variant="outline" onClick={buscarPorNif}>Buscar</Button>
