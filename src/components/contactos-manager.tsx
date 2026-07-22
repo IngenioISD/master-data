@@ -92,6 +92,7 @@ export function ContactosManager({
 
   const [editing, setEditing] = useState<ContactoForm | null>(null);
   const [duplicatePending, setDuplicatePending] = useState<ContactoForm | null>(null);
+  const [deletePendingId, setDeletePendingId] = useState<string | null>(null);
 
   const upsert = useMutation({
     mutationFn: async (c: ContactoForm) => {
