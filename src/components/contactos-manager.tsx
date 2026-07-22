@@ -260,7 +260,7 @@ export function ContactosManager({
                       </Button>
                     )}
                     {canDelete && (
-                      <Button size="icon" variant="ghost" onClick={() => c.id && remove.mutate(c.id)}>
+                      <Button size="icon" variant="ghost" onClick={() => c.id && setDeletePendingId(c.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
