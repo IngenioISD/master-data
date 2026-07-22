@@ -92,6 +92,7 @@ export function ContactosManager({
 
   const [editing, setEditing] = useState<ContactoForm | null>(null);
   const [duplicatePending, setDuplicatePending] = useState<ContactoForm | null>(null);
+  const [deletePendingId, setDeletePendingId] = useState<string | null>(null);
 
   const upsert = useMutation({
     mutationFn: async (c: ContactoForm) => {
@@ -259,7 +260,7 @@ export function ContactosManager({
                       </Button>
                     )}
                     {canDelete && (
-                      <Button size="icon" variant="ghost" onClick={() => c.id && remove.mutate(c.id)}>
+                      <Button size="icon" variant="ghost" onClick={() => c.id && setDeletePendingId(c.id)}>
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     )}
@@ -295,6 +296,32 @@ export function ContactosManager({
               }}
             >
               Añadir de todas formas
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog
+        open={!!deletePendingId}
+        onOpenChange={(open) => {
+          if (!open) setDeletePendingId(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Eliminar contacto</AlertDialogTitle>
+            <AlertDialogDescription>
+              Esta acción no se puede deshacer. ¿Estás seguro?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancelar</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (deletePendingId) remove.mutate(deletePendingId);
+                setDeletePendingId(null);
+              }}
+            >
+              Aceptar
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
