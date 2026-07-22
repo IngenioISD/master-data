@@ -91,6 +91,7 @@ export function ContactosManager({
   });
 
   const [editing, setEditing] = useState<ContactoForm | null>(null);
+  const [duplicatePending, setDuplicatePending] = useState<ContactoForm | null>(null);
 
   const upsert = useMutation({
     mutationFn: async (c: ContactoForm) => {
@@ -126,10 +127,37 @@ export function ContactosManager({
     onSuccess: () => {
       qc.invalidateQueries({ queryKey });
       setEditing(null);
+      setDuplicatePending(null);
       toast.success("Contacto guardado");
     },
     onError: (e: Error) => toast.error(e.message),
   });
+
+  const handleSave = async (c: ContactoForm) => {
+    // Duplicate check only when creating (no id) on proveedor_contactos
+    if (!c.id && table === "proveedor_contactos") {
+      const nombre = c.nombre.trim();
+      const apellido1 = (c.apellido_1 || "").trim();
+      let query = supabase
+        .from(table)
+        .select("id")
+        .eq(fkColumn, fkValue)
+        .ilike("nombre", nombre);
+      query = apellido1
+        ? query.ilike("apellido_1", apellido1)
+        : query.is("apellido_1", null);
+      const { data, error } = await query.limit(1);
+      if (error) {
+        toast.error(error.message);
+        return;
+      }
+      if (data && data.length > 0) {
+        setDuplicatePending(c);
+        return;
+      }
+    }
+    upsert.mutate(c);
+  };
 
   const remove = useMutation({
     mutationFn: async (id: string) => {
@@ -138,8 +166,8 @@ export function ContactosManager({
         .delete({ count: "exact" })
         .eq("id", id)
         .select("id");
-      if (error) throw error;
-      if (count === 0) {
+        if (error) throw error;
+        if (count === 0) {
         throw new Error("No se ha eliminado el contacto: la base de datos no permite modificar esta fila.");
       }
     },
